@@ -1,4 +1,3 @@
-
 String Blade Compiler
 =======================
 Render Blade templates from string value.
@@ -25,7 +24,7 @@ Usage
 
 This package offers a StringView facade with the same syntax as View but accepts a Array or Array Object instance instead of path to view.
 
-
+```php
 return StringView::make(
                         array(
                             // this actual blade template
@@ -39,6 +38,7 @@ return StringView::make(
                             'token1'=> 'token 1 value'
                         )
                 );
+```
 
 License
 =======================
