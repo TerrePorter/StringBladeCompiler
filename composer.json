@@ -1,0 +1,21 @@
+{
+    "name": "wpb/string-blade-compiler",
+    "description": "Render Blade templates from string",
+    "keywords": ["laravel", "blade", "compiler"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Terre Porter",
+            "email": "tporter@webpage-builders.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "Wpb\\StringBladeCompiler\\": "src/"
+        }
+    },
+    "minimum-stability": "dev"
+}
