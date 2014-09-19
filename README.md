@@ -9,7 +9,7 @@ I have reworked it to allow for a generic array of the required fields to genera
 Update
 ======================
 Updated to support Laravel 5-dev.
-To use in 4.3 change 
+To use in 4.2 change 
  use Illuminate\Contracts\View\View as ViewContract;
 back to 
  use Illuminate\Support\Contracts\RenderableInterface as Renderable;
