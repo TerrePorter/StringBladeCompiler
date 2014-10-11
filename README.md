@@ -8,7 +8,7 @@ I have reworked it to allow for a generic array of the required fields to genera
 
 Version
 =======================
-This version is for Laravel 4.2
+This version 1 is for Laravel 4.2, version 2 is for Laravel 5.
 
 
 Installation
