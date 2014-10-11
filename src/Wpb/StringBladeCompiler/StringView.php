@@ -215,16 +215,16 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, Renderabl
 		unset($this->data[$key]);
 	}
 
-       /**
-        * Checks if a string is a valid timestamp.
-        * from https://gist.github.com/sepehr/6351385
-        *
-        * @param string $timestamp Timestamp to validate.
-        *
-        * @return bool
-        */
-        function is_timestamp($timestamp)
-        {
+	/**
+	* Checks if a string is a valid timestamp.
+	* from https://gist.github.com/sepehr/6351385
+    *
+	* @param string $timestamp Timestamp to validate.
+    *
+    * @return bool
+    */
+    function is_timestamp($timestamp)
+    {
             $check = (is_int($timestamp) OR is_float($timestamp))
             ? $timestamp
             : (string) (int) $timestamp;
@@ -232,6 +232,18 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, Renderabl
             return ($check === $timestamp)
             AND ( (int) $timestamp <= PHP_INT_MAX)
             AND ( (int) $timestamp >= ~PHP_INT_MAX);
-        }
+    }
+    
+    /**
+	 * Register a custom Blade compiler.
+	 *
+	 * @param  \Closure  $compiler
+	 * @return void
+	 */
+	public function extend(Closure $compiler)
+	{
+            $this->engine->getCompiler()->extend($compiler);
+	}
+        
 }
 
