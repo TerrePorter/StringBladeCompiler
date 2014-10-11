@@ -5,12 +5,12 @@ use Illuminate\Support\MessageBag;
 use Illuminate\View\Engines\EngineInterface;
 use Illuminate\Support\Contracts\MessageProviderInterface;
 use Illuminate\Support\Contracts\ArrayableInterface as Arrayable;
-use Illuminate\Contracts\View\View as ViewContract;
+use Illuminate\Support\Contracts\RenderableInterface as Renderable
 use Wpb\StringBladeCompiler\Compilers\StringBladeCompiler;
 use Illuminate\View\Engines\CompilerEngine;
 
 
-class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContract {
+class StringView extends \Illuminate\View\View implements ArrayAccess, Renderable {
 
 	protected $template_field = 'template';
 
