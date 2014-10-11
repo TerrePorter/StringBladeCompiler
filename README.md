@@ -6,22 +6,13 @@ This is a fork from https://github.com/Flynsarmy/laravel-db-blade-compiler which
 
 I have reworked it to allow for a generic array of the required fields to generates and return a compiled view from a blade-syntax template.
 
-Update
-======================
-Updated to support Laravel 5-dev.
-To use in 4.2 change 
- use Illuminate\Contracts\View\View as ViewContract;
-back to 
- use Illuminate\Support\Contracts\RenderableInterface as Renderable;
-in StringBladeCompiler\StringView.php
+Version
+=======================
+This version is for Laravel 4.2
 
 
 Installation
 =======================
-
-(I'm unsure how to move the code from laravel 4 workbench to vendor)
-
-My current path is app\workbench\wpb\string-blade-compiler
 
 Add the ServiceProvider to the providers array in app/config/app.php
 
