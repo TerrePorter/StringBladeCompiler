@@ -41,6 +41,15 @@ return StringView::make(
                 );
 ```
 
+Also allows for Blade::extend, example :
+```php
+                        // allows for @continue and @break in foreach in blade templates
+                        Blade::extend(function($value)
+                        {
+                          return preg_replace('/(\s*)@(break|continue)(\s*)/', '$1<?php $2; ?>$3', $value);
+                        });
+```
+
 License
 =======================
 
