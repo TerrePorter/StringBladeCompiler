@@ -24,6 +24,7 @@ Add the repository to composer.json:
 	],
 
 Add the package to composer.json:
+
 	"require": {
 		"laravel/framework": "4.2.*",
 		"wpb/string-blade-compiler": "*@dev"
