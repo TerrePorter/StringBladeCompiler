@@ -13,6 +13,25 @@ This version 1 is for Laravel 4.2, version 2 is for Laravel 5.
 
 Installation
 =======================
+For composer install, 
+
+Add the package to composer.json:
+
+    "require": {
+        "wpb/string-blade-compiler": "2.*@dev"
+    }
+    
+Add the repository to composer.json:
+
+    "repositories": [
+        {            
+            "name": "wpb/string-blade-compiler",
+            "type": "git",
+            "url": "https://github.com/TerrePorter/StringBladeCompiler.git"
+        }
+    ]
+
+
 
 Add the ServiceProvider to the providers array in app/config/app.php
 
