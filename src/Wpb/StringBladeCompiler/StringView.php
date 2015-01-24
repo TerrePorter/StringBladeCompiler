@@ -16,7 +16,7 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
 
 	public function __construct()
 	{
-		$cache = App::make('path.storage').'/views';
+		$cache = App::make('path.storage').'/framework/views';
 		$compiler = new StringBladeCompiler(App::make('files'), $cache);
 		$this->engine = new CompilerEngine($compiler);
 	}
