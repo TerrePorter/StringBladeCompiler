@@ -1,11 +1,9 @@
 <?php namespace Wpb\StringBladeCompiler;
 
-use App, View, Closure, Config, ArrayAccess;
-use Illuminate\Support\MessageBag;
-use Illuminate\View\Engines\EngineInterface;
-use Illuminate\Support\Contracts\MessageProviderInterface;
-use Illuminate\Support\Contracts\ArrayableInterface as Arrayable;
-use Illuminate\Contracts\View\View as ViewContract; 
+use App, View, Closure, ArrayAccess;
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Contracts\View\View as ViewContract;
 use Wpb\StringBladeCompiler\Compilers\StringBladeCompiler;
 use Illuminate\View\Engines\CompilerEngine;
 
@@ -21,56 +19,85 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
 		$this->engine = new CompilerEngine($compiler);
 	}
 
-	/**
-	 * Get a evaluated view contents for the given view.
-	 *
-	 * @param  object  $view
-	 * @param  array   $data
-	 * @param  array   $mergeData
-	 * @return \Illuminate\View\View
-	 */
+    /**
+     * Get a evaluated view contents for the given view.
+     *
+     * @param  object $view
+     * @param  array $data
+     * @param  array $mergeData
+     * @throws \Exception
+     * @return \Illuminate\View\View
+     */
 	public function make($view, $data = array(), $mergeData = array())
 	{
 
-            // convert if array convert to object
-            if (is_array($view)) {
-                $view = json_decode(json_encode($view), FALSE);
-            }
+        // if array convert to object
+        if (is_array($view)) {
+            $view = json_decode(json_encode($view), FALSE);
+        }
 
+        /* validate the object */
+        
+        // timestamp for the compiled template cache
+        // this needs to be updated if the actual template data changed
+        if( !isset($view->updated_at) )
+        {
+            throw new \Exception('Missing template last modified timestamp.');
+        } else {
+            if (!$this->is_timestamp($view->updated_at)) {
+                throw new \Exception('Template last modified timestamp appears to be invalid.');
+            }
             /*
-           *  validate the object
+           * Note: a timestamp of 0 translates to force recompile of the template.
            */
+        }
 
-            // timestamp for the compiled template cache
-            // this needs to be updated if the actuall template data changed
-            if( !isset($view->updated_at) )
-            {
-                throw new \Exception('Template last modified timestamp.');
-            } else {
-                if (!$this->is_timestamp($view->updated_at)) {
-                    throw new \Exception('Template last modified timestamp appears to be invalid.');
-                }
-                /*
-               * Note: a timestamp of 0 translates to force recompile of the template.
-               */
-            }
+        // this is the actually blade template data
+        if( !isset($view->template) )
+        {
+            throw new \Exception('No template data was provided.');
+        }
 
-            // this is the actually blade template data
-            if( !isset($view->template) )
-            {
-                throw new \Exception('No template data was provided.');
-            }
+        // each template requires a unique cache key
+        if( !isset($view->cache_key) )
+        {
+            throw new \Exception('Missing unique template cache string.');
+        }
 
-            // each template requires a unique cache key
-            if( !isset($view->cache_key) )
-            {
-                throw new \Exception('Missing unique template cache string.');
-            }
+        $this->path = $view;
+        $this->data = array_merge($mergeData, $this->parseData($data));
 
-            $this->path = $view;
-            $this->data = array_merge($mergeData, $this->parseData($data));
+        return $this;
+	}
 
-            return $this;
+	/**
+	* Checks if a string is a valid timestamp.
+	* from https://gist.github.com/sepehr/6351385
+    *
+	* @param string $timestamp Timestamp to validate.
+    *
+    * @return bool
+    */
+    function is_timestamp($timestamp)
+    {
+        $check = (is_int($timestamp) OR is_float($timestamp))
+        ? $timestamp
+        : (string) (int) $timestamp;
+
+        return ($check === $timestamp)
+        AND ( (int) $timestamp <= PHP_INT_MAX)
+        AND ( (int) $timestamp >= ~PHP_INT_MAX);
+    }
+
+	/**
+	 * Parse the given data into a raw array.
+	 *
+	 * @param  mixed  $data
+	 * @return array
+	 */
+	protected function parseData($data)
+	{
+		return $data instanceof Arrayable ? $data->toArray() : $data;
 	}
 
 	/**
@@ -87,7 +114,7 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
 
 		// Once we have the contents of the view, we will flush the sections if we are
 		// done rendering all views so that there is nothing left hanging over when
-		// anothoer view is rendered in the future by the application developers.
+		// another view is rendered in the future by the application developers.
 		View::flushSectionsIfDoneRendering();
 
 		return $response ?: $contents;
@@ -115,7 +142,10 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
 		return $contents;
 	}
 
-	protected function getContents()
+    /**
+     * @return string
+     */
+    protected function getContents()
 	{
                 /**
                 * This property will be added to models being compiled with StringView
@@ -124,37 +154,6 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
                 $this->path->__string_blade_compiler_template_field = $this->template_field;
 
 		return parent::getContents();
-	}
-
-	/**
-	 * Parse the given data into a raw array.
-	 *
-	 * @param  mixed  $data
-	 * @return array
-	 */
-	protected function parseData($data)
-	{
-		return $data instanceof Arrayable ? $data->toArray() : $data;
-	}
-
-	/**
-	 * Get the data bound to the view instance.
-	 *
-	 * @return array
-	 */
-	protected function gatherData()
-	{
-		$data = array_merge(View::getShared(), $this->data);
-
-		foreach ($data as $key => $value)
-		{
-			if ($value instanceof Renderable)
-			{
-				$data[$key] = $value->render();
-			}
-		}
-
-		return $data;
 	}
 
 	/**
@@ -215,25 +214,6 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
 		unset($this->data[$key]);
 	}
 
-	/**
-	* Checks if a string is a valid timestamp.
-	* from https://gist.github.com/sepehr/6351385
-    *
-	* @param string $timestamp Timestamp to validate.
-    *
-    * @return bool
-    */
-    function is_timestamp($timestamp)
-    {
-            $check = (is_int($timestamp) OR is_float($timestamp))
-            ? $timestamp
-            : (string) (int) $timestamp;
-
-            return ($check === $timestamp)
-            AND ( (int) $timestamp <= PHP_INT_MAX)
-            AND ( (int) $timestamp >= ~PHP_INT_MAX);
-    }
-    
     /**
 	 * Register a custom Blade compiler.
 	 *
@@ -244,6 +224,63 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
 	{
             $this->engine->getCompiler()->extend($compiler);
 	}
-        
-}
+    
+    /**
+     * Sets the raw tags used for the compiler.
+     *
+     *
+     * @param  string  $openTag
+     * @param  string  $closeTag
+     * @return void
+     */
+    public function setRawTags($openTag, $closeTag)
+    {
+        $this->engine->getCompiler()->setRawTags($openTag, $closeTag);
+    }
 
+    /**
+     * Sets the escaped content tags used for the compiler.
+     *
+     * @param  string  $openTag
+     * @param  string  $closeTag
+     * @return void
+     */
+	public function setEscapedContentTags($openTag, $closeTag)
+    {
+        $this->setContentTags($openTag, $closeTag);
+    }
+
+    /**
+     * Sets the content tags used for the compiler.
+     *
+     * @param  string  $openTag
+     * @param  string  $closeTag
+     * @param  bool    $escaped
+     * @return void
+     */
+    public function setContentTags($openTag, $closeTag, $escaped = false)
+    {
+        $this->engine->getCompiler()->setContentTags($openTag, $closeTag, $escaped);
+	}
+
+	/**
+	 * Get the data bound to the view instance.
+	 *
+	 * @return array
+	 */
+	protected function gatherData()
+	{
+		$data = array_merge(View::getShared(), $this->data);
+
+		foreach ($data as $key => $value)
+		{
+			if ($value instanceof Renderable)
+			{
+				$data[$key] = $value->render();
+			}
+		}
+
+		return $data;
+	}
+
+}
