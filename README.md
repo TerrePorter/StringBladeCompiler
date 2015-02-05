@@ -68,6 +68,12 @@ Also allows for Blade::extend, example :
                           return preg_replace('/(\s*)@(break|continue)(\s*)/', '$1<?php $2; ?>$3', $value);
                         });
 ```
+Can set tags using the passthru helpers
+```
+    StringView::setRawTags('[!!', '!!]');
+    StringView::setEscapedContentTags('[[[', ']]]');
+    StringView::setContentTags('[[', ']]');
+```
 
 License
 =======================
