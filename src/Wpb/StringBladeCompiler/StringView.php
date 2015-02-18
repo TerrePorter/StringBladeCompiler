@@ -10,14 +10,24 @@ use Illuminate\View\Engines\CompilerEngine;
 
 class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContract {
 
-	protected $template_field = 'template';
+    protected $template_field = 'template';
+    protected $compiler;
 
-	public function __construct()
-	{
-		$cache = App::make('path.storage').'/framework/views';
-		$compiler = new StringBladeCompiler(App::make('files'), $cache);
-		$this->engine = new CompilerEngine($compiler);
-	}
+
+    public function __construct()
+    {
+        $cache = App::make('path.storage').'/framework/views';
+        $this->compiler = new StringBladeCompiler(App::make('files'), $cache);
+
+        $this->engine = new CompilerEngine($this->compiler);
+    }
+
+    /**
+     * Returns the current compiler
+     */
+    public function getCompiler() {
+        return $this->compiler;
+    }
 
     /**
      * Get a evaluated view contents for the given view.
@@ -28,8 +38,8 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
      * @throws \Exception
      * @return \Illuminate\View\View
      */
-	public function make($view, $data = array(), $mergeData = array())
-	{
+    public function make($view, $data = array(), $mergeData = array())
+    {
 
         // if array convert to object
         if (is_array($view)) {
@@ -37,7 +47,7 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
         }
 
         /* validate the object */
-        
+
         // timestamp for the compiled template cache
         // this needs to be updated if the actual template data changed
         if( !isset($view->updated_at) )
@@ -68,163 +78,163 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
         $this->data = array_merge($mergeData, $this->parseData($data));
 
         return $this;
-	}
+    }
 
-	/**
-	* Checks if a string is a valid timestamp.
-	* from https://gist.github.com/sepehr/6351385
-    *
-	* @param string $timestamp Timestamp to validate.
-    *
-    * @return bool
-    */
+    /**
+     * Checks if a string is a valid timestamp.
+     * from https://gist.github.com/sepehr/6351385
+     *
+     * @param string $timestamp Timestamp to validate.
+     *
+     * @return bool
+     */
     function is_timestamp($timestamp)
     {
         $check = (is_int($timestamp) OR is_float($timestamp))
-        ? $timestamp
-        : (string) (int) $timestamp;
+            ? $timestamp
+            : (string) (int) $timestamp;
 
         return ($check === $timestamp)
         AND ( (int) $timestamp <= PHP_INT_MAX)
         AND ( (int) $timestamp >= ~PHP_INT_MAX);
     }
 
-	/**
-	 * Parse the given data into a raw array.
-	 *
-	 * @param  mixed  $data
-	 * @return array
-	 */
-	protected function parseData($data)
-	{
-		return $data instanceof Arrayable ? $data->toArray() : $data;
-	}
+    /**
+     * Parse the given data into a raw array.
+     *
+     * @param  mixed  $data
+     * @return array
+     */
+    protected function parseData($data)
+    {
+        return $data instanceof Arrayable ? $data->toArray() : $data;
+    }
 
-	/**
-	 * Get the string contents of the view.
-	 *
-	 * @param  \Closure  $callback
-	 * @return string
-	 */
-	public function render(Closure $callback = null)
-	{
-		$contents = $this->renderContents();
+    /**
+     * Get the string contents of the view.
+     *
+     * @param  \Closure  $callback
+     * @return string
+     */
+    public function render(Closure $callback = null)
+    {
+        $contents = $this->renderContents();
 
-		$response = isset($callback) ? $callback($this, $contents) : null;
+        $response = isset($callback) ? $callback($this, $contents) : null;
 
-		// Once we have the contents of the view, we will flush the sections if we are
-		// done rendering all views so that there is nothing left hanging over when
-		// another view is rendered in the future by the application developers.
-		View::flushSectionsIfDoneRendering();
+        // Once we have the contents of the view, we will flush the sections if we are
+        // done rendering all views so that there is nothing left hanging over when
+        // another view is rendered in the future by the application developers.
+        View::flushSectionsIfDoneRendering();
 
-		return $response ?: $contents;
-	}
+        return $response ?: $contents;
+    }
 
-	/**
-	 * Get the contents of the view instance.
-	 *
-	 * @return string
-	 */
-	protected function renderContents()
-	{
-		// We will keep track of the amount of views being rendered so we can flush
-		// the section after the complete rendering operation is done. This will
-		// clear out the sections for any separate views that may be rendered.
-		View::incrementRender();
+    /**
+     * Get the contents of the view instance.
+     *
+     * @return string
+     */
+    protected function renderContents()
+    {
+        // We will keep track of the amount of views being rendered so we can flush
+        // the section after the complete rendering operation is done. This will
+        // clear out the sections for any separate views that may be rendered.
+        View::incrementRender();
 
-		$contents = $this->getContents();
+        $contents = $this->getContents();
 
-		// Once we've finished rendering the view, we'll decrement the render count
-		// so that each sections get flushed out next time a view is created and
-		// no old sections are staying around in the memory of an environment.
-		View::decrementRender();
+        // Once we've finished rendering the view, we'll decrement the render count
+        // so that each sections get flushed out next time a view is created and
+        // no old sections are staying around in the memory of an environment.
+        View::decrementRender();
 
-		return $contents;
-	}
+        return $contents;
+    }
 
     /**
      * @return string
      */
     protected function getContents()
-	{
-                /**
-                * This property will be added to models being compiled with StringView
-                * to keep track of which field in the model is being compiled
-                */
-                $this->path->__string_blade_compiler_template_field = $this->template_field;
+    {
+        /**
+         * This property will be added to models being compiled with StringView
+         * to keep track of which field in the model is being compiled
+         */
+        $this->path->__string_blade_compiler_template_field = $this->template_field;
 
-		return parent::getContents();
-	}
-
-	/**
-	 * Add a view instance to the view data.
-	 *
-	 * @param  string  $key
-	 * @param  string  $view
-	 * @param  array   $data
-	 * @return \Illuminate\View\View
-	 */
-	public function nest($key, $view, array $data = array())
-	{
-		return $this->with($key, View::make($view, $data));
-	}
-
-	/**
-	 * Determine if a piece of data is bound.
-	 *
-	 * @param  string  $key
-	 * @return bool
-	 */
-	public function offsetExists($key)
-	{
-		return array_key_exists($key, $this->data);
-	}
-
-	/**
-	 * Get a piece of bound data to the view.
-	 *
-	 * @param  string  $key
-	 * @return mixed
-	 */
-	public function offsetGet($key)
-	{
-		return $this->data[$key];
-	}
-
-	/**
-	 * Set a piece of data on the view.
-	 *
-	 * @param  string  $key
-	 * @param  mixed   $value
-	 * @return void
-	 */
-	public function offsetSet($key, $value)
-	{
-		$this->with($key, $value);
-	}
-
-	/**
-	 * Unset a piece of data from the view.
-	 *
-	 * @param  string  $key
-	 * @return void
-	 */
-	public function offsetUnset($key)
-	{
-		unset($this->data[$key]);
-	}
+        return parent::getContents();
+    }
 
     /**
-	 * Register a custom Blade compiler.
-	 *
-	 * @param  \Closure  $compiler
-	 * @return void
-	 */
-	public function extend(Closure $compiler)
-	{
-            $this->engine->getCompiler()->extend($compiler);
-	}
-    
+     * Add a view instance to the view data.
+     *
+     * @param  string  $key
+     * @param  string  $view
+     * @param  array   $data
+     * @return \Illuminate\View\View
+     */
+    public function nest($key, $view, array $data = array())
+    {
+        return $this->with($key, View::make($view, $data));
+    }
+
+    /**
+     * Determine if a piece of data is bound.
+     *
+     * @param  string  $key
+     * @return bool
+     */
+    public function offsetExists($key)
+    {
+        return array_key_exists($key, $this->data);
+    }
+
+    /**
+     * Get a piece of bound data to the view.
+     *
+     * @param  string  $key
+     * @return mixed
+     */
+    public function offsetGet($key)
+    {
+        return $this->data[$key];
+    }
+
+    /**
+     * Set a piece of data on the view.
+     *
+     * @param  string  $key
+     * @param  mixed   $value
+     * @return void
+     */
+    public function offsetSet($key, $value)
+    {
+        $this->with($key, $value);
+    }
+
+    /**
+     * Unset a piece of data from the view.
+     *
+     * @param  string  $key
+     * @return void
+     */
+    public function offsetUnset($key)
+    {
+        unset($this->data[$key]);
+    }
+
+    /**
+     * Register a custom Blade compiler.
+     *
+     * @param  \Closure  $compiler
+     * @return void
+     */
+    public function extend(Closure $compiler)
+    {
+        $this->engine->getCompiler()->extend($compiler);
+    }
+
     /**
      * Sets the raw tags used for the compiler.
      *
@@ -245,7 +255,7 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
      * @param  string  $closeTag
      * @return void
      */
-	public function setEscapedContentTags($openTag, $closeTag)
+    public function setEscapedContentTags($openTag, $closeTag)
     {
         $this->setContentTags($openTag, $closeTag);
     }
@@ -261,26 +271,26 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
     public function setContentTags($openTag, $closeTag, $escaped = false)
     {
         $this->engine->getCompiler()->setContentTags($openTag, $closeTag, $escaped);
-	}
+    }
 
-	/**
-	 * Get the data bound to the view instance.
-	 *
-	 * @return array
-	 */
-	protected function gatherData()
-	{
-		$data = array_merge(View::getShared(), $this->data);
+    /**
+     * Get the data bound to the view instance.
+     *
+     * @return array
+     */
+    protected function gatherData()
+    {
+        $data = array_merge(View::getShared(), $this->data);
 
-		foreach ($data as $key => $value)
-		{
-			if ($value instanceof Renderable)
-			{
-				$data[$key] = $value->render();
-			}
-		}
+        foreach ($data as $key => $value)
+        {
+            if ($value instanceof Renderable)
+            {
+                $data[$key] = $value->render();
+            }
+        }
 
-		return $data;
-	}
+        return $data;
+    }
 
 }
