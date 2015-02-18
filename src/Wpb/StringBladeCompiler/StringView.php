@@ -257,7 +257,7 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
      */
     public function setEscapedContentTags($openTag, $closeTag)
     {
-        $this->setContentTags($openTag, $closeTag);
+        $this->setContentTags($openTag, $closeTag. true);
     }
 
     /**
