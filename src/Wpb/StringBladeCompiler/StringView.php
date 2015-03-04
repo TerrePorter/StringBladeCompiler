@@ -7,6 +7,7 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Contracts\View\View as ViewContract;
 use Illuminate\View\Engines\CompilerEngine;
+use StringCompilerException;
 use View;
 use Wpb\StringBladeCompiler\Compilers\StringBladeCompiler;
 
@@ -56,10 +57,10 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
         // timestamp for the compiled template cache
         // this needs to be updated if the actual template data changed
         if (!isset($view->updated_at)) {
-            throw new \Exception('Missing template last modified timestamp.');
+            throw new StringCompilerException('Missing template last modified timestamp.');
         } else {
             if (!$this->is_timestamp($view->updated_at)) {
-                throw new \Exception('Template last modified timestamp appears to be invalid.');
+                throw new StringCompilerException('Template last modified timestamp appears to be invalid.');
             }
             /*
            * Note: a timestamp of 0 translates to force recompile of the template.
@@ -68,12 +69,12 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
 
         // this is the actually blade template data
         if (!isset($view->template)) {
-            throw new \Exception('No template data was provided.');
+            throw new StringCompilerException('No template data was provided.');
         }
 
         // each template requires a unique cache key
         if (!isset($view->cache_key)) {
-            throw new \Exception('Missing unique template cache string.');
+            throw new StringCompilerException('Missing unique template cache string.');
         }
 
         $this->path = $view;
