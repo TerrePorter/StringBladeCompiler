@@ -41,7 +41,7 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
      * @param  object $view
      * @param  array $data
      * @param  array $mergeData
-     * @throws \Exception
+     * @throws StringCompilerException
      * @return \Illuminate\View\View
      */
     public function make($view, $data = array(), $mergeData = array())
