@@ -1,14 +1,18 @@
 <?php namespace Wpb\StringBladeCompiler;
 
-use App, View, Closure, ArrayAccess;
+use App;
+use ArrayAccess;
+use Closure;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Contracts\View\View as ViewContract;
-use Wpb\StringBladeCompiler\Compilers\StringBladeCompiler;
 use Illuminate\View\Engines\CompilerEngine;
+use View;
+use Wpb\StringBladeCompiler\Compilers\StringBladeCompiler;
 
 
-class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContract {
+class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContract
+{
 
     protected $template_field = 'template';
     protected $compiler;
@@ -16,7 +20,7 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
 
     public function __construct()
     {
-        $cache = App::make('path.storage').'/framework/views';
+        $cache = App::make('path.storage') . '/framework/views';
         $this->compiler = new StringBladeCompiler(App::make('files'), $cache);
 
         $this->engine = new CompilerEngine($this->compiler);
@@ -25,7 +29,8 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
     /**
      * Returns the current compiler
      */
-    public function getCompiler() {
+    public function getCompiler()
+    {
         return $this->compiler;
     }
 
@@ -50,8 +55,7 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
 
         // timestamp for the compiled template cache
         // this needs to be updated if the actual template data changed
-        if( !isset($view->updated_at) )
-        {
+        if (!isset($view->updated_at)) {
             throw new \Exception('Missing template last modified timestamp.');
         } else {
             if (!$this->is_timestamp($view->updated_at)) {
@@ -63,14 +67,12 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
         }
 
         // this is the actually blade template data
-        if( !isset($view->template) )
-        {
+        if (!isset($view->template)) {
             throw new \Exception('No template data was provided.');
         }
 
         // each template requires a unique cache key
-        if( !isset($view->cache_key) )
-        {
+        if (!isset($view->cache_key)) {
             throw new \Exception('Missing unique template cache string.');
         }
 
@@ -92,17 +94,17 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
     {
         $check = (is_int($timestamp) OR is_float($timestamp))
             ? $timestamp
-            : (string) (int) $timestamp;
+            : (string)(int)$timestamp;
 
         return ($check === $timestamp)
-        AND ( (int) $timestamp <= PHP_INT_MAX)
-        AND ( (int) $timestamp >= ~PHP_INT_MAX);
+        AND ((int)$timestamp <= PHP_INT_MAX)
+        AND ((int)$timestamp >= ~PHP_INT_MAX);
     }
 
     /**
      * Parse the given data into a raw array.
      *
-     * @param  mixed  $data
+     * @param  mixed $data
      * @return array
      */
     protected function parseData($data)
@@ -113,7 +115,7 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
     /**
      * Get the string contents of the view.
      *
-     * @param  \Closure  $callback
+     * @param  \Closure $callback
      * @return string
      */
     public function render(Closure $callback = null)
@@ -169,9 +171,9 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
     /**
      * Add a view instance to the view data.
      *
-     * @param  string  $key
-     * @param  string  $view
-     * @param  array   $data
+     * @param  string $key
+     * @param  string $view
+     * @param  array $data
      * @return \Illuminate\View\View
      */
     public function nest($key, $view, array $data = array())
@@ -182,7 +184,7 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
     /**
      * Determine if a piece of data is bound.
      *
-     * @param  string  $key
+     * @param  string $key
      * @return bool
      */
     public function offsetExists($key)
@@ -193,7 +195,7 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
     /**
      * Get a piece of bound data to the view.
      *
-     * @param  string  $key
+     * @param  string $key
      * @return mixed
      */
     public function offsetGet($key)
@@ -204,8 +206,8 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
     /**
      * Set a piece of data on the view.
      *
-     * @param  string  $key
-     * @param  mixed   $value
+     * @param  string $key
+     * @param  mixed $value
      * @return void
      */
     public function offsetSet($key, $value)
@@ -216,7 +218,7 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
     /**
      * Unset a piece of data from the view.
      *
-     * @param  string  $key
+     * @param  string $key
      * @return void
      */
     public function offsetUnset($key)
@@ -227,7 +229,7 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
     /**
      * Register a custom Blade compiler.
      *
-     * @param  \Closure  $compiler
+     * @param  \Closure $compiler
      * @return void
      */
     public function extend(Closure $compiler)
@@ -239,8 +241,8 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
      * Sets the raw tags used for the compiler.
      *
      *
-     * @param  string  $openTag
-     * @param  string  $closeTag
+     * @param  string $openTag
+     * @param  string $closeTag
      * @return void
      */
     public function setRawTags($openTag, $closeTag)
@@ -251,21 +253,21 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
     /**
      * Sets the escaped content tags used for the compiler.
      *
-     * @param  string  $openTag
-     * @param  string  $closeTag
+     * @param  string $openTag
+     * @param  string $closeTag
      * @return void
      */
     public function setEscapedContentTags($openTag, $closeTag)
     {
-        $this->setContentTags($openTag, $closeTag. true);
+        $this->setContentTags($openTag, $closeTag . true);
     }
 
     /**
      * Sets the content tags used for the compiler.
      *
-     * @param  string  $openTag
-     * @param  string  $closeTag
-     * @param  bool    $escaped
+     * @param  string $openTag
+     * @param  string $closeTag
+     * @param  bool $escaped
      * @return void
      */
     public function setContentTags($openTag, $closeTag, $escaped = false)
@@ -282,10 +284,8 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
     {
         $data = array_merge(View::getShared(), $this->data);
 
-        foreach ($data as $key => $value)
-        {
-            if ($value instanceof Renderable)
-            {
+        foreach ($data as $key => $value) {
+            if ($value instanceof Renderable) {
                 $data[$key] = $value->render();
             }
         }
