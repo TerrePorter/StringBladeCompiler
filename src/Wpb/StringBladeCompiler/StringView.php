@@ -260,7 +260,7 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
      */
     public function setEscapedContentTags($openTag, $closeTag)
     {
-        $this->setContentTags($openTag, $closeTag . true);
+        $this->setContentTags($openTag, $closeTag , true);
     }
 
     /**
@@ -274,6 +274,17 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
     public function setContentTags($openTag, $closeTag, $escaped = false)
     {
         $this->engine->getCompiler()->setContentTags($openTag, $closeTag, $escaped);
+    }
+    
+    /**
+     * Set the echo format to be used by the compiler.
+     *
+     * @param  string  $format
+     * @return void
+     */
+    public function setEchoFormat($format)
+    {
+        $this->engine->getCompiler()->setEchoFormat($format);
     }
 
     /**
