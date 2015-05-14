@@ -70,9 +70,13 @@ Also allows for Blade::extend, example :
 ```
 Can set tags using the passthru helpers
 ```
+    // in order for the setContentTags to not be html escaped
+    // need to set the format
+    StringView::setEchoFormat('%s');
+
     StringView::setRawTags('[!!', '!!]');
     StringView::setEscapedContentTags('[[[', ']]]');
-    StringView::setContentTags('[[', ']]');
+    
 ```
 
 License
