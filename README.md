@@ -70,13 +70,13 @@ Also allows for Blade::extend, example :
 ```
 Can set tags using the passthru helpers
 ```
-    // in order for the setContentTags to not be html escaped
-    // need to set the format
+    // in order for the setContentTags to not be html escaped, as the third option in the setContentTags no longer works. (see code change with laravel https://github.com/laravel/framework/commit/deb0a3259d34e0246703ff48871b7993c224e325)
     StringView::setEchoFormat('%s');
-
-    StringView::setRawTags('[!!', '!!]');
-    StringView::setEscapedContentTags('[[[', ']]]');
     
+    // change the tags
+    StringView::setRawTags('[!!', '!!]');
+    StringView::setContentTags('[[', ']]');
+    StringView::setEscapedContentTags('[[[', ']]]');
 ```
 
 License
