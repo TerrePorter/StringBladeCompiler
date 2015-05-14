@@ -74,7 +74,7 @@ Can set tags using the passthru helpers
     //  third option in the setContentTags no longer works. (see code change with laravel
     StringView::setEchoFormat('%s');
 ```
-    (ref: https://github.com/laravel/framework/commit/deb0a3259d34e0246703ff48871b7993c224e325)
+ref: https://github.com/laravel/framework/commit/deb0a3259d34e0246703ff48871b7993c224e325
     
 ```    
     // change the tags
