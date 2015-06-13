@@ -49,7 +49,7 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
     /**
      * Get a evaluated view contents for the given view.
      *
-     * @param  object $view
+     * @param  object|array $view
      * @param  array $data
      * @param  array $mergeData
      * @throws StringCompilerException
@@ -286,7 +286,7 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
     {
         $this->engine->getCompiler()->setContentTags($openTag, $closeTag, $escaped);
     }
-    
+
     /**
      * Set the echo format to be used by the compiler.
      *
