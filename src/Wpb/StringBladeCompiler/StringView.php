@@ -48,9 +48,7 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
     {
 
         // if array convert to object
-        if (is_array($view)) {
-            $view = json_decode(json_encode($view), FALSE);
-        }
+        $view = ( object ) $view;
 
         /* validate the object */
 
