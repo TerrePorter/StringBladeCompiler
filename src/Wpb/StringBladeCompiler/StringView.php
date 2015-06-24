@@ -8,12 +8,11 @@ use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Contracts\View\View as ViewContract;
 use Illuminate\View\Engines\CompilerEngine;
 use StringCompilerException;
-use View;
+use \Illuminate\View\View as View;
 use Wpb\StringBladeCompiler\Compilers\StringBladeCompiler;
 
 
-class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContract
-{
+class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContract {
 
     protected $template_field = 'template';
     protected $compiler;
@@ -21,7 +20,7 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
 
     public function __construct()
     {
-        $cache = App::make('path.storage') . '/framework/views';
+        $cache = storage_path('framework/views');
         $this->compiler = new StringBladeCompiler(App::make('files'), $cache);
 
         $this->engine = new CompilerEngine($this->compiler);
@@ -273,7 +272,7 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
     {
         $this->engine->getCompiler()->setContentTags($openTag, $closeTag, $escaped);
     }
-    
+
     /**
      * Set the echo format to be used by the compiler.
      *
