@@ -35,9 +35,20 @@ class StringView extends \Illuminate\View\View implements ArrayAccess, ViewContr
     }
 
     /**
+     * Directive method.
+     *
+     * @param $name
+     * @param $handler
+     */
+    public function directive( $name, $handler )
+    {
+        $this->compiler->directive( $name, $handler );
+    }
+
+    /**
      * Get a evaluated view contents for the given view.
      *
-     * @param  object $view
+     * @param  object|array $view
      * @param  array $data
      * @param  array $mergeData
      * @throws StringCompilerException
