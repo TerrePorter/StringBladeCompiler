@@ -6,9 +6,9 @@ use Closure;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Contracts\View\View as ViewContract;
+use Illuminate\Support\Facades\View;
 use Illuminate\View\Engines\CompilerEngine;
 use StringCompilerException;
-use Illuminate\View\View as View;
 use Wpb\StringBladeCompiler\Compilers\StringBladeCompiler;
 
 
