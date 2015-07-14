@@ -1,8 +1,11 @@
 String Blade Compiler
 =======================
+[![Laravel 5.1](https://img.shields.io/badge/Laravel-5.1-orange.svg?style=flat-square)](http://laravel.com)
+[![License](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](https://tldrlegal.com/license/mit-license)
+
 Render Blade templates from string value.
 
-Reworked version to allow for array to be passed instead of template file name.
+Reworked version to allow for array to be passed to the view function instead of template file name.
 
 This is a direct extension of \Illuminate\View\View and replaces the default.
 
