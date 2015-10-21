@@ -17,27 +17,19 @@ For composer install,
 
 Add the package to composer.json:
 
-    "require": {
-        "wpb/string-blade-compiler": "2.*@dev"
-    }
-    
-Add the repository to composer.json:
-
-    "repositories": [
-        {            
-            "name": "wpb/string-blade-compiler",
-            "type": "git",
-            "url": "https://github.com/TerrePorter/StringBladeCompiler.git"
-        }
-    ]
-
-
+	"require": {		
+		"wpb/string-blade-compiler": "2.*"
+	},
+	
+On packagist.org at https://packagist.org/packages/wpb/string-blade-compiler
+	
+Or from the console using require: composer require "wpb/string-blade-compiler:2.*"
 
 Add the ServiceProvider to the providers array in app/config/app.php
 
-'Wpb\StringBladeCompiler\StringBladeCompilerServiceProvider',
+	'Wpb\StringBladeCompiler\StringBladeCompilerServiceProvider',
 
-There is no need to add a Facade to the aliases array in the same file as the service provider, this is being included  automatically in the ServiceProvider.
+There is no need to add a Facade to the aliases array as the service provider it is included automatically in the package's ServiceProvider.
 
 Usage
 =======================
