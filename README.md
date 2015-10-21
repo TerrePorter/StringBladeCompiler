@@ -13,35 +13,29 @@ Version
 =======================
 This version 1 is for Laravel 4.2, version 2 is for Laravel 5.
 
-Version 3 is a complete rewrite, for Larave 5.1
+Version 3 is a complete rewrite, for Laravel 5.1
 
 Installation
 =======================
 
-Add the repository to composer.json:
-
-	"repositories": [
-	{
-	    "name": "wpb/string-blade-compiler",
-		"url": "https://github.com/TerrePorter/StringBladeCompiler.git",
-		"type": "git"
-	}
-	],
+Add to composer.json using 
 
 Add the package to composer.json:
 
 	"require": {
 		"laravel/framework": "5.1.*",
-		"wpb/string-blade-compiler": "3.*@dev"
+		"wpb/string-blade-compiler": "3.0.0"
 	},
 	
-TODO: add to packagist	
-
+On packagist.org at https://packagist.org/packages/wpb/string-blade-compiler
+	
+Or from the console using require: composer require "wpb/string-blade-compiler:3.0.0"
+ 	
 In config\app.php, providers section:
 
 Replace Illuminate\View\ViewServiceProvider::class with Wpb\String_Blade_Compiler\ViewServiceProvider::class,
 	
-There is no need to add a Facade to the aliases array in the same file as the service provider, this is being included  automatically in the ServiceProvider.
+There is no need to add a Facade to the aliases array as the service provider it is included automatically in the package's ServiceProvider.
 
 Config
 =======================
