@@ -10,6 +10,7 @@ Version
 =======================
 This version 1 is for Laravel 4.2, version 2 is for Laravel 5.
 
+Version 3 is a complete rewrite, for Laravel 5.1
 
 Installation
 =======================
@@ -18,12 +19,12 @@ For composer install,
 Add the package to composer.json:
 
 	"require": {		
-		"wpb/string-blade-compiler": "2.*"
+		"wpb/string-blade-compiler": "1.*"
 	},
 	
 On packagist.org at https://packagist.org/packages/wpb/string-blade-compiler
 	
-Or from the console using require: composer require "wpb/string-blade-compiler:2.*"
+Or from the console using require: composer require "wpb/string-blade-compiler:1.*"
 
 Add the ServiceProvider to the providers array in app/config/app.php
 
