@@ -10,6 +10,7 @@ Version
 =======================
 This version 2 is for Laravel 5, version 1 is for Laravel 4.2.
 
+Version 3 is a complete rewrite, for Laravel 5.1
 
 Installation
 =======================
