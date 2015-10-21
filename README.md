@@ -116,6 +116,17 @@ If you wish to use these with file templates,
     Blade::setForceTemplateRecompile(true);	
 ```
 
+Changing the tags
+
+```php
+  // change the tags
+    StringBlade::setRawTags('[!!', '!!]',escapeFlag);
+    StringBlade::setContentTags('[[', ']]',escapeFlag);
+    StringBlade::setEscapedContentTags('[[[', ']]]',escapeFlag);
+```
+
+'escapeFlag', if true then the tags will be escaped, if false then they will not be escaped (same as setContentTagsEscaped function)
+
 License
 =======================
 
