@@ -24,7 +24,7 @@ Add the package to composer.json:
 
 	"require": {
 		"laravel/framework": "5.1.*",
-		"wpb/string-blade-compiler": "3.0.0"
+		"wpb/string-blade-compiler": "3.2.0"
 	},
 	
 On packagist.org at https://packagist.org/packages/wpb/string-blade-compiler
