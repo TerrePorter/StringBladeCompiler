@@ -1,6 +1,6 @@
 String Blade Compiler
 =======================
-[![Laravel 5.1](https://img.shields.io/badge/Laravel-5.1-orange.svg?style=flat-square)](http://laravel.com)
+[![Laravel 5.2](https://img.shields.io/badge/Laravel-5.2-orange.svg?style=flat-square)](http://laravel.com)
 [![License](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](https://tldrlegal.com/license/mit-license)
 
 Render Blade templates from string value.
@@ -15,6 +15,8 @@ This version 1 is for Laravel 4.2, version 2 is for Laravel 5.
 
 Version 3 is a complete rewrite, for Laravel 5.1
 
+Version 3.2 is version update for Laravel 5.2
+
 Installation
 =======================
 
@@ -23,17 +25,17 @@ Add to composer.json using
 Add the package to composer.json:
 
 	"require": {
-		"laravel/framework": "5.1.*",
+		"laravel/framework": "5.2.*",
 		"wpb/string-blade-compiler": "3.2.0"
 	},
 	
 On packagist.org at https://packagist.org/packages/wpb/string-blade-compiler
 	
-Or from the console using require: composer require "wpb/string-blade-compiler:3.0.0"
+Or from the console using require: composer require "wpb/string-blade-compiler:3.2.*"
  	
 In config\app.php, providers section:
 
-Replace Illuminate\View\ViewServiceProvider::class with Wpb\String_Blade_Compiler\ViewServiceProvider::class,
+Replace "Illuminate\View\ViewServiceProvider::class" with "Wpb\String_Blade_Compiler\ViewServiceProvider::class",
 	
 There is no need to add a Facade to the aliases array as the service provider it is included automatically in the package's ServiceProvider.
 
