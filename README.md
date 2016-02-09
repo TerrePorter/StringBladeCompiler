@@ -15,6 +15,8 @@ This version 1 is for Laravel 4.2, version 2 is for Laravel 5.
 
 Version 3 is a complete rewrite, for Laravel 5.1
 
+Version 3.2 is a version update for packagist, for Laravel 5.2.
+
 Installation
 =======================
 
@@ -22,13 +24,15 @@ Add the package to composer.json:
 
 	"require": {
 		"laravel/framework": "5.1.*",
-		"wpb/string-blade-compiler": "3.0.*"
+		"wpb/string-blade-compiler": "VERSION"
 	},
 	
 On packagist.org at https://packagist.org/packages/wpb/string-blade-compiler
 	
-Or from the console using require: composer require "wpb/string-blade-compiler:3.0.*"
+Or from the console using require: composer require "wpb/string-blade-compiler:VERSION"
  	
+To get versions 'composer show wpb/string-blade-compiler', such as 'dev-master, * 3.2.x-dev, 3.2.0, 3.0.x-dev, 3.0.0, 2.1.0, 2.0.x-dev, 2.0.0, 1.0.x-dev, 1.0.0'
+
 In config\app.php, providers section:
 
 Replace 'Illuminate\View\ViewServiceProvider::class' with 'Wpb\String_Blade_Compiler\ViewServiceProvider::class',
@@ -127,7 +131,7 @@ Changing the tags
 
 'escapeFlag', if true then the tags will be escaped, if false then they will not be escaped (same as setContentTagsEscaped function)
 
-Deleting generated compiled cach view files,
+Deleting generated compiled cach view files (v3+),
 
 Set the delete flag for the compiler being used, stringblade or blade
 ```
