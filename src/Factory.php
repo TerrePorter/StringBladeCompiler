@@ -317,6 +317,19 @@ class Factory implements FactoryContract
     }
 
     /**
+     * Get the appropriate view engine for the given string key.
+     *
+     * @param  string  $stringkey
+     * @return \Illuminate\View\Engines\EngineInterface
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function getEngineFromStringKey($stringkey)
+    {
+        return $this->engines->resolve($stringkey);
+    }
+
+    /**
      * Get the extension used by the view file.
      *
      * @param  string  $path
