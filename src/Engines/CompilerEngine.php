@@ -7,6 +7,12 @@ use Illuminate\View\Compilers\CompilerInterface;
 
 class CompilerEngine extends \Illuminate\View\Engines\CompilerEngine
 {
+    /**
+     * Bool Flag to Enable/Disable removal of the generated view cache file.
+     *
+     * @var bool
+     */
+    public $deleteViewCacheAfterRender = false;
 
     /**
      * Get the evaluated contents of the view.
@@ -44,4 +50,12 @@ class CompilerEngine extends \Illuminate\View\Engines\CompilerEngine
         return $results;
     }
 
+    /**
+     * Set the delete view cache after render flag.
+     *
+     * @param bool $delete
+     */
+    public function setDeleteViewCacheAfterRender($delete = true) {
+        $this->deleteViewCacheAfterRender = $delete;
+    }
 }
