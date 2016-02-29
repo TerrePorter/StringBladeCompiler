@@ -18,7 +18,6 @@ class ViewServiceProvider extends \Illuminate\View\ViewServiceProvider
     public function register()
     {
 
-
         // include the package config
         $this->mergeConfigFrom(
             __DIR__.'/config/blade.php', 'blade'
@@ -76,7 +75,6 @@ class ViewServiceProvider extends \Illuminate\View\ViewServiceProvider
             return new CompilerEngine($app['stringblade.compiler'], $app['files']);
         });
     }
-
 
     /**
      * Perform post-registration booting of services.

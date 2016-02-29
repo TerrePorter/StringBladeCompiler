@@ -15,7 +15,6 @@ use Wpb\String_Blade_Compiler\Engines\CompilerEngine;
 use Wpb\String_Blade_Compiler\StringView;
 use Wpb\String_Blade_Compiler\Compilers\StringBladeCompiler;
 
-
 class Factory implements FactoryContract
 {
     /**
@@ -157,9 +156,7 @@ class Factory implements FactoryContract
             $data = array_merge($mergeData, $this->parseData($data));
 
             $this->callCreator($view = new StringView($this, $engine, $view, 'not-used', $data));
-
         } else {
-
             if (isset($this->aliases[$view])) {
                 $view = $this->aliases[$view];
             }

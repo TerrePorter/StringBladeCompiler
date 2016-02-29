@@ -43,8 +43,6 @@ class CompilerEngine extends \Illuminate\View\Engines\CompilerEngine
         // which have been rendered for right exception messages to be generated.
         $results = $this->evaluatePath($compiled, $data);
 
-
-
         array_pop($this->lastCompiled);
 
         return $results;
@@ -55,7 +53,8 @@ class CompilerEngine extends \Illuminate\View\Engines\CompilerEngine
      *
      * @param bool $delete
      */
-    public function setDeleteViewCacheAfterRender($delete = true) {
+    public function setDeleteViewCacheAfterRender($delete = true)
+    {
         $this->deleteViewCacheAfterRender = $delete;
     }
 }
