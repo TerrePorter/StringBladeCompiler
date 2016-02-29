@@ -385,7 +385,7 @@ class ViewFactoryTest extends PHPUnit_Framework_TestCase
     {
         return new Factory(
             m::mock('Illuminate\View\Engines\EngineResolver'),
-            m::mock('Wpb\String_Blade_Compiler\ViewFinderInterface'),
+            m::mock('Illuminate\View\ViewFinderInterface'),
             m::mock('Illuminate\Contracts\Events\Dispatcher')
         );
     }
@@ -394,7 +394,7 @@ class ViewFactoryTest extends PHPUnit_Framework_TestCase
     {
         return [
             m::mock('Illuminate\View\Engines\EngineResolver'),
-            m::mock('Wpb\String_Blade_Compiler\ViewFinderInterface'),
+            m::mock('Illuminate\View\ViewFinderInterface'),
             m::mock('Illuminate\Contracts\Events\Dispatcher'),
         ];
     }

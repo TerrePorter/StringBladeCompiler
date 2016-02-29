@@ -7,7 +7,13 @@ use ArrayAccess;
 use Config;
 use Illuminate\View\Engines\EngineInterface;
 use Illuminate\Contracts\View\View as ViewContract;
+use Illuminate\View\Factory as BaseFactory;
 
+/**
+ * Class StringView
+ *
+ * Extension to the Laravel View class which can compile strings as views.
+ */
 class StringView extends View implements ArrayAccess, ViewContract
 {
 
