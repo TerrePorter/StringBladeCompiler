@@ -6,6 +6,8 @@ use Illuminate\View\Engines\EngineResolver;
 use Wpb\String_Blade_Compiler\Engines\CompilerEngine;
 use Wpb\String_Blade_Compiler\Compilers\BladeCompiler;
 use Wpb\String_Blade_Compiler\Compilers\StringBladeCompiler;
+use Illuminate\View\FileViewFinder;
+use Illuminate\Foundation\AliasLoader;
 
 class ViewServiceProvider extends \Illuminate\View\ViewServiceProvider
 {
@@ -24,7 +26,7 @@ class ViewServiceProvider extends \Illuminate\View\ViewServiceProvider
         );
 
         $this->app->booting(function () {
-            $loader = \Illuminate\Foundation\AliasLoader::getInstance();
+            $loader = AliasLoader::getInstance();
             $loader->alias('StringBlade', 'Wpb\String_Blade_Compiler\Facades\StringBlade');
         });
 

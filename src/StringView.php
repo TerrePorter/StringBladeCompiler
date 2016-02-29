@@ -2,21 +2,36 @@
 
 namespace Wpb\String_Blade_Compiler;
 
-use App;
 use ArrayAccess;
-use Config;
 use Illuminate\View\Engines\EngineInterface;
 use Illuminate\Contracts\View\View as ViewContract;
-use Illuminate\View\Factory as BaseFactory;
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Fluent;
 
 /**
  * Class StringView
  *
- * Extension to the Laravel View class which can compile strings as views.
+ * Extension to the Laravel View class which can store strings as views.
+ * Mostly relates to storing the various components of the view object
+ * such as template, cache_key, secondsTemplateCacheExpires.
  */
 class StringView extends View implements ArrayAccess, ViewContract
 {
 
+    /**
+     * The name of the view, or an object representing the view.
+     *
+     * Object attributes:
+     *
+     * * template
+     * * cache_key
+     * * secondsTemplateCacheExpires
+     *
+     * @var string|Fluent
+     */
+    protected $view;
+
+    /** @var string for use in models (not sure if still relevant) */
     protected $template_field = 'template';
 
     /**
@@ -24,7 +39,7 @@ class StringView extends View implements ArrayAccess, ViewContract
      *
      * @param  \Wpb\String_Blade_Compiler\Factory  $factory
      * @param  \Illuminate\View\Engines\EngineInterface  $engine
-     * @param  string  $view
+     * @param  string|array|Arrayable|Fluent  $view
      * @param  string  $path
      * @param  array   $data
      *
@@ -32,22 +47,19 @@ class StringView extends View implements ArrayAccess, ViewContract
     public function __construct(Factory $factory, EngineInterface $engine, $view, $path, $data = [])
     {
         // setup variables
-        $this->view = (is_array($view))?(object) $view:$view;
-        $this->path = $this->view;
-        $this->engine = $engine;
-        $this->factory = $factory;
+        if (is_array($view)) {
+            $view = new Fluent($view);
+        } elseif ($view instanceof Arrayable) {
+            $view = new Fluent($view);
+        } elseif (is_string($view)) {
+            $view = new Fluent(['template' => $view]);
+        }
 
-        $this->data = $this->parseData($data);
-
-        //$this->data = $data instanceof Arrayable ? $data->toArray() : (array) $data;
-
-       // if ($data instanceof Arrayable) {
-        //    var_dump($this->data);
-        //}
-
+        parent::__construct($factory, $engine, $view, $view, $data);
 
         // check if view has secondsTemplateCacheExpires set, or get from config
-        if (!property_exists($this->view, "secondsTemplateCacheExpires") || !is_numeric($this->view->secondsTemplateCacheExpires)) {
+        if (! isset($this->view->secondsTemplateCacheExpires) ||
+            ! is_numeric($this->view->secondsTemplateCacheExpires)) {
             $this->view->secondsTemplateCacheExpires = config('blade.secondsTemplateCacheExpires');
             if (is_null($this->view->secondsTemplateCacheExpires)) {
                 $this->view->secondsTemplateCacheExpires = 0;
@@ -55,19 +67,17 @@ class StringView extends View implements ArrayAccess, ViewContract
         }
 
         // this is the actually blade template data
-        if (!property_exists($this->view, "template")) {
+        if (empty($this->view->template)) {
             // is the same as sending a blank template file
             $this->view->template = '';
         }
 
         // each template requires a unique cache key, or generate one
-        if (!property_exists($this->view, "cache_key")) {
-            // special, to catch if template is empty
-            if (empty($this->view->template)) {
-                $this->view->cache_key = md5('_empty_template_');
-            } else {
-                $this->view->cache_key = md5($this->view->template);
-            }
+        // special, to catch if template is empty
+        if (empty($this->view->template)) {
+            $this->view->cache_key = md5('_empty_template_');
+        } else {
+            $this->view->cache_key = md5($this->view->template);
         }
     }
 

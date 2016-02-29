@@ -2,9 +2,11 @@
 
 namespace Wpb\String_Blade_Compiler\Engines;
 
-use ErrorException;
-use Illuminate\View\Compilers\CompilerInterface;
-
+/**
+ * Class CompilerEngine
+ *
+ * Extends Laravel CompilerEngine to allow StringView classes.
+ */
 class CompilerEngine extends \Illuminate\View\Engines\CompilerEngine
 {
     /**
@@ -17,7 +19,7 @@ class CompilerEngine extends \Illuminate\View\Engines\CompilerEngine
     /**
      * Get the evaluated contents of the view.
      *
-     * @param  string  $path
+     * @param  string|object  $path
      * @param  array   $data
      * @return string
      */
