@@ -1,2 +1,6 @@
 /.netbeans/
 /bkp/
+.directory
+composer.lock
+/vendor/
+/.idea/
