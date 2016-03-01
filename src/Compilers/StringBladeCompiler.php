@@ -2,11 +2,29 @@
 
 namespace Wpb\String_Blade_Compiler\Compilers;
 
-use Config;
 use Illuminate\View\Compilers\CompilerInterface;
+use Twig_Environment;
+use Illuminate\Filesystem\Filesystem;
 
 class StringBladeCompiler extends BladeCompiler implements CompilerInterface
 {
+    /**
+     * @var \Twig_Environment
+     */
+    protected $twig;
+
+    /**
+     * Create a new compiler instance.
+     *
+     * @param  \Illuminate\Filesystem\Filesystem  $files
+     * @param  string  $cachePath
+     * @param  \Twig_Environment $twig
+     */
+    public function __construct(Filesystem $files, $cachePath, Twig_Environment $twig)
+    {
+        parent::__construct($files, $cachePath);
+        $this->twig = $twig;
+    }
 
     /**
      * Compile the view at the given path.
@@ -21,7 +39,19 @@ class StringBladeCompiler extends BladeCompiler implements CompilerInterface
         $string = $viewData->template;
 
         // Compile to PHP
-        $contents = $this->compileString($string);
+        switch ($viewData->pagetype) {
+            case 'blade':
+                $contents = $this->compileString($string);
+                break;
+
+            case 'twig':
+                $contents = $this->twig->compileSource($string);
+                break;
+
+            default:
+                $contents = $this->compileString($string);
+                break;
+        }
 
         // check/save cache
         if (! is_null($this->cachePath)) {
@@ -48,7 +78,7 @@ class StringBladeCompiler extends BladeCompiler implements CompilerInterface
     /**
      * Determine if the view at the given path is expired.
      *
-     * @param  string  $viewData
+     * @param  object  $viewData
      * @return bool
      */
     public function isExpired($viewData)

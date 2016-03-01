@@ -6,9 +6,26 @@ use Illuminate\View\Engines\EngineResolver;
 use Wpb\String_Blade_Compiler\Engines\CompilerEngine;
 use Wpb\String_Blade_Compiler\Compilers\BladeCompiler;
 use Wpb\String_Blade_Compiler\Compilers\StringBladeCompiler;
-use Illuminate\View\FileViewFinder;
 use Illuminate\Foundation\AliasLoader;
+use Illuminate\Support\Facades\App;
 
+/**
+ * Class ViewServiceProvider
+ *
+ * Service providers are the central place of all Laravel application bootstrapping.
+ * Your own application, as well as all of Laravel's core services are bootstrapped
+ * via service providers.
+ *
+ * ### Functionality
+ *
+ * * Merge in the config.
+ * * Set up an alias StringBlade to the Facace that we provide.
+ * * Register the resolvers and other components that we need.
+ * * Boot the TwigBridge\ServiceProvider to save the caller having to do that.
+ *
+ * @see  Illuminate\Support\ServiceProvider
+ * @link http://laravel.com/docs/5.1/providers
+ */
 class ViewServiceProvider extends \Illuminate\View\ViewServiceProvider
 {
 
@@ -70,7 +87,7 @@ class ViewServiceProvider extends \Illuminate\View\ViewServiceProvider
         // instance to pass into the engine so it can compile the views properly.
         $app->singleton('stringblade.compiler', function ($app) {
             $cache = $app['config']['view.compiled'];
-            return new StringBladeCompiler($app['files'], $cache);
+            return new StringBladeCompiler($app['files'], $cache, $app['twig']);
         });
 
         $resolver->register('stringblade', function () use ($app) {
@@ -88,6 +105,10 @@ class ViewServiceProvider extends \Illuminate\View\ViewServiceProvider
         $this->publishes([
             __DIR__.'/config/blade.php' => config_path('blade.php'),
         ], 'config');
+
+        // Register other providers required by this provider, which saves the caller
+        // from having to register them each individually.
+        App::register(\TwigBridge\ServiceProvider::class);
     }
 
     /**
@@ -110,19 +131,6 @@ class ViewServiceProvider extends \Illuminate\View\ViewServiceProvider
 
         $resolver->register('blade', function () use ($app) {
             return new CompilerEngine($app['blade.compiler'], $app['files']);
-        });
-    }
-
-    /**
-     * Register the view finder implementation.
-     *
-     * @return void
-     */
-    public function registerViewFinder()
-    {
-        $this->app->bind('view.finder', function ($app) {
-            $paths = $app['config']['view.paths'];
-            return new FileViewFinder($app['files'], $paths);
         });
     }
 

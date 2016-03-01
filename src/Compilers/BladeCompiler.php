@@ -2,7 +2,16 @@
 
 namespace Wpb\String_Blade_Compiler\Compilers;
 
-class BladeCompiler extends \Illuminate\View\Compilers\BladeCompiler
+use Illuminate\View\Compilers\BladeCompiler as BaseBladeCompiler;
+use Illuminate\View\Compilers\CompilerInterface;
+
+/**
+ * Class BladeCompiler
+ *
+ * Extension of the native Laravel BladeCompiler class to work around a few issues
+ * that prevent blades from being compiled from strings.
+ */
+class BladeCompiler extends BaseBladeCompiler implements CompilerInterface
 {
 
     /**
