@@ -105,10 +105,6 @@ class ViewServiceProvider extends \Illuminate\View\ViewServiceProvider
         $this->publishes([
             __DIR__.'/config/blade.php' => config_path('blade.php'),
         ], 'config');
-
-        // Register other providers required by this provider, which saves the caller
-        // from having to register them each individually.
-        App::register(\TwigBridge\ServiceProvider::class);
     }
 
     /**
