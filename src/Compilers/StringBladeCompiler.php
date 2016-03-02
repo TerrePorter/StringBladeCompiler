@@ -13,6 +13,9 @@ class StringBladeCompiler extends BladeCompiler implements CompilerInterface
      */
     protected $twig;
 
+    /** @var  array */
+    protected $loadedTemplates;
+
     /**
      * Create a new compiler instance.
      *
@@ -45,7 +48,28 @@ class StringBladeCompiler extends BladeCompiler implements CompilerInterface
                 break;
 
             case 'twig':
-                $contents = $this->twig->compileSource($string);
+                // Compiling a twig template creates a file containing the definition
+                // for a class of name $cls.
+                $cls = $this->twig->getTemplateClass($string);
+
+                // Check to see if the internal cache of the output is available.
+                if (isset($this->loadedTemplates[$cls])) {
+                    $contents = $this->loadedTemplates[$cls];
+                    break;
+                }
+
+                // Only compile if we have not already compiled.  If we have not
+                // already compiled, then compile and evaluate because that will
+                // create the class $cls.
+                if (! class_exists($cls, false)) {
+                    $twig_content = $this->twig->compileSource($string);
+                    eval('?>' . $twig_content);
+                }
+
+                // Internally cache the contents
+                $this->loadedTemplates[$cls] = new $cls($this->twig);
+                $contents = $this->loadedTemplates[$cls];
+
                 break;
 
             default:
