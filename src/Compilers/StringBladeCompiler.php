@@ -50,7 +50,8 @@ class StringBladeCompiler extends BladeCompiler implements CompilerInterface
             case 'twig':
                 // Compiling a twig template creates a file containing the definition
                 // for a class of name $cls.
-                $cls = $this->twig->getTemplateClass($string);
+                $name = md5($string);
+                $cls = $this->twig->getTemplateClass($name);
 
                 // Check to see if the internal cache of the output is available.
                 if (isset($this->loadedTemplates[$cls])) {
@@ -62,12 +63,19 @@ class StringBladeCompiler extends BladeCompiler implements CompilerInterface
                 // already compiled, then compile and evaluate because that will
                 // create the class $cls.
                 if (! class_exists($cls, false)) {
-                    $twig_content = $this->twig->compileSource($string);
+                    $twig_content = $this->twig->compileSource($string, $name);
                     eval('?>' . $twig_content);
                 }
 
                 // Internally cache the contents
-                $this->loadedTemplates[$cls] = new $cls($this->twig);
+                /** @var \Twig_Template $template */
+                $template = new $cls($this->twig);
+
+                // FIXME: The render function does not work here because it requires
+                // access to the data.  See the note in viewpages.  An alternative
+                // Engine is required.
+                $data = array();
+                $this->loadedTemplates[$cls] = $template->render($data);
                 $contents = $this->loadedTemplates[$cls];
 
                 break;
