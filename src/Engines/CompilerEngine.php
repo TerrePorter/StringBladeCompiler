@@ -2,9 +2,11 @@
 
 namespace Wpb\String_Blade_Compiler\Engines;
 
-use ErrorException;
-use Illuminate\View\Compilers\CompilerInterface;
-
+/**
+ * Class CompilerEngine
+ *
+ * Extends Laravel CompilerEngine to allow StringView classes.
+ */
 class CompilerEngine extends \Illuminate\View\Engines\CompilerEngine
 {
     /**
@@ -17,7 +19,7 @@ class CompilerEngine extends \Illuminate\View\Engines\CompilerEngine
     /**
      * Get the evaluated contents of the view.
      *
-     * @param  string  $path
+     * @param  string|object  $path
      * @param  array   $data
      * @return string
      */
@@ -43,8 +45,6 @@ class CompilerEngine extends \Illuminate\View\Engines\CompilerEngine
         // which have been rendered for right exception messages to be generated.
         $results = $this->evaluatePath($compiled, $data);
 
-
-
         array_pop($this->lastCompiled);
 
         return $results;
@@ -55,7 +55,8 @@ class CompilerEngine extends \Illuminate\View\Engines\CompilerEngine
      *
      * @param bool $delete
      */
-    public function setDeleteViewCacheAfterRender($delete = true) {
+    public function setDeleteViewCacheAfterRender($delete = true)
+    {
         $this->deleteViewCacheAfterRender = $delete;
     }
 }

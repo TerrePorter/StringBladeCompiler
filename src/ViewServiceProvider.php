@@ -6,6 +6,8 @@ use Illuminate\View\Engines\EngineResolver;
 use Wpb\String_Blade_Compiler\Engines\CompilerEngine;
 use Wpb\String_Blade_Compiler\Compilers\BladeCompiler;
 use Wpb\String_Blade_Compiler\Compilers\StringBladeCompiler;
+use Illuminate\View\FileViewFinder;
+use Illuminate\Foundation\AliasLoader;
 
 class ViewServiceProvider extends \Illuminate\View\ViewServiceProvider
 {
@@ -18,14 +20,13 @@ class ViewServiceProvider extends \Illuminate\View\ViewServiceProvider
     public function register()
     {
 
-
         // include the package config
         $this->mergeConfigFrom(
             __DIR__.'/config/blade.php', 'blade'
         );
 
         $this->app->booting(function () {
-            $loader = \Illuminate\Foundation\AliasLoader::getInstance();
+            $loader = AliasLoader::getInstance();
             $loader->alias('StringBlade', 'Wpb\String_Blade_Compiler\Facades\StringBlade');
         });
 
@@ -76,7 +77,6 @@ class ViewServiceProvider extends \Illuminate\View\ViewServiceProvider
             return new CompilerEngine($app['stringblade.compiler'], $app['files']);
         });
     }
-
 
     /**
      * Perform post-registration booting of services.

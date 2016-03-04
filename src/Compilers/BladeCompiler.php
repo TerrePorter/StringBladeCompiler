@@ -94,7 +94,8 @@ class BladeCompiler extends \Illuminate\View\Compilers\BladeCompiler
      * @param  bool  $escaped
      * @return void
      */
-    public function setContentTagsEscaped($escaped = true) {
+    public function setContentTagsEscaped($escaped = true)
+    {
         $this->contentTagsEscaped = $escaped;
     }
 
@@ -104,7 +105,8 @@ class BladeCompiler extends \Illuminate\View\Compilers\BladeCompiler
      * @param  bool  $recompile
      * @return void
      */
-    public function setForceTemplateRecompile($recompile = true) {
+    public function setForceTemplateRecompile($recompile = true)
+    {
         $this->forceTemplateRecompile = $recompile;
     }
 
@@ -134,5 +136,7 @@ class BladeCompiler extends \Illuminate\View\Compilers\BladeCompiler
      * @param  string  $format
      * @return void     *
      */
-    public function setEchoFormat($format) {}
+    public function setEchoFormat($format)
+    {
+    }
 }
