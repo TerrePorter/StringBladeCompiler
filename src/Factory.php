@@ -96,6 +96,20 @@ class Factory implements FactoryContract
     protected $sectionStack = [];
 
     /**
+     * All of the finished, captured push sections.
+     *
+     * @var array
+     */
+    protected $pushes = [];
+
+    /**
+     * The stack of in-progress push sections.
+     *
+     * @var array
+     */
+    protected $pushStack = [];
+
+    /**
      * The number of active rendering operations.
      *
      * @var int
@@ -108,7 +122,7 @@ class Factory implements FactoryContract
      * @param  \Illuminate\View\Engines\EngineResolver  $engines
      * @param  \Wpb\String_Blade_Compiler\ViewFinderInterface  $finder
      * @param  \Illuminate\Contracts\Events\Dispatcher  $events
-     *
+     * @return void
      */
     public function __construct(EngineResolver $engines, ViewFinderInterface $finder, Dispatcher $events)
     {
@@ -125,7 +139,7 @@ class Factory implements FactoryContract
      * @param  string  $path
      * @param  array   $data
      * @param  array   $mergeData
-     * @return \Illuminate\View\View
+     * @return \Illuminate\Contracts\View\View
      */
     public function file($path, $data = [], $mergeData = [])
     {
@@ -340,16 +354,16 @@ class Factory implements FactoryContract
         $extensions = array_keys($this->extensions);
 
         return Arr::first($extensions, function ($key, $value) use ($path) {
-            return Str::endsWith($path, $value);
+            return Str::endsWith($path, '.'.$value);
         });
     }
 
     /**
      * Add a piece of shared data to the environment.
      *
-     * @param  string  $key
-     * @param  mixed   $value
-     * @return void
+     * @param  array|string  $key
+     * @param  mixed  $value
+     * @return mixed
      */
     public function share($key, $value = null)
     {
@@ -423,7 +437,7 @@ class Factory implements FactoryContract
      * @param  \Closure|string  $callback
      * @param  string  $prefix
      * @param  int|null  $priority
-     * @return \Closure
+     * @return \Closure|null
      */
     protected function addViewEvent($view, $callback, $prefix = 'composing: ', $priority = null)
     {
@@ -466,7 +480,7 @@ class Factory implements FactoryContract
      *
      * @param  string    $name
      * @param  \Closure  $callback
-     * @param  int      $priority
+     * @param  int|null  $priority
      * @return void
      */
     protected function addEventListener($name, $callback, $priority = null)
@@ -576,6 +590,10 @@ class Factory implements FactoryContract
      */
     public function yieldSection()
     {
+        if (empty($this->sectionStack)) {
+            return '';
+        }
+
         return $this->yieldContent($this->stopSection());
     }
 
@@ -587,6 +605,10 @@ class Factory implements FactoryContract
      */
     public function stopSection($overwrite = false)
     {
+        if (empty($this->sectionStack)) {
+            throw new InvalidArgumentException('Cannot end a section without first starting one.');
+        }
+
         $last = array_pop($this->sectionStack);
 
         if ($overwrite) {
@@ -605,6 +627,10 @@ class Factory implements FactoryContract
      */
     public function appendSection()
     {
+        if (empty($this->sectionStack)) {
+            throw new InvalidArgumentException('Cannot end a section without first starting one.');
+        }
+
         $last = array_pop($this->sectionStack);
 
         if (isset($this->sections[$last])) {
@@ -655,15 +681,91 @@ class Factory implements FactoryContract
     }
 
     /**
+     * Start injecting content into a push section.
+     *
+     * @param  string  $section
+     * @param  string  $content
+     * @return void
+     */
+    public function startPush($section, $content = '')
+    {
+        if ($content === '') {
+            if (ob_start()) {
+                $this->pushStack[] = $section;
+            }
+        } else {
+            $this->extendPush($section, $content);
+        }
+    }
+
+    /**
+     * Stop injecting content into a push section.
+     *
+     * @return string
+     * @throws \InvalidArgumentException
+     */
+    public function stopPush()
+    {
+        if (empty($this->pushStack)) {
+            throw new InvalidArgumentException('Cannot end a section without first starting one.');
+        }
+
+        $last = array_pop($this->pushStack);
+
+        $this->extendPush($last, ob_get_clean());
+
+        return $last;
+    }
+
+    /**
+     * Append content to a given push section.
+     *
+     * @param  string  $section
+     * @param  string  $content
+     * @return void
+     */
+    protected function extendPush($section, $content)
+    {
+        if (! isset($this->pushes[$section])) {
+            $this->pushes[$section] = [];
+        }
+        if (! isset($this->pushes[$section][$this->renderCount])) {
+            $this->pushes[$section][$this->renderCount] = $content;
+        } else {
+            $this->pushes[$section][$this->renderCount] .= $content;
+        }
+    }
+
+    /**
+     * Get the string contents of a push section.
+     *
+     * @param  string  $section
+     * @param  string  $default
+     * @return string
+     */
+    public function yieldPushContent($section, $default = '')
+    {
+        if (! isset($this->pushes[$section])) {
+            return $default;
+        }
+
+        return implode(array_reverse($this->pushes[$section]));
+    }
+
+    /**
      * Flush all of the section contents.
      *
      * @return void
      */
     public function flushSections()
     {
-        $this->sections = [];
+        $this->renderCount = 0;
 
+        $this->sections = [];
         $this->sectionStack = [];
+
+        $this->pushes = [];
+        $this->pushStack = [];
     }
 
     /**
