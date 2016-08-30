@@ -15,7 +15,9 @@ This version 1 is for Laravel 4.2, version 2 is for Laravel 5.
 
 Version 3 is a complete rewrite, for Laravel 5.1
 
-Version 3.2 is a version update for packagist, for Laravel 5.2.
+Version 3.2 is a version for Laravel 5.2.
+
+Version 3.3 is a version for Laravel 5.3.
 
 Installation
 =======================
