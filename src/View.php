@@ -2,7 +2,8 @@
 
 namespace Wpb\String_Blade_Compiler;
 
-use Closure;
+use Exception;
+use Throwable;
 use ArrayAccess;
 use BadMethodCallException;
 use Illuminate\Support\Str;
