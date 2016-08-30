@@ -2,6 +2,7 @@
 
 namespace Wpb\String_Blade_Compiler\Engines;
 
+use Exception;
 use ErrorException;
 use Illuminate\View\Compilers\CompilerInterface;
 
