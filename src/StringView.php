@@ -26,8 +26,9 @@ class StringView extends View implements ArrayAccess, ViewContract
      * * template
      * * cache_key
      * * secondsTemplateCacheExpires
+     * * pagetype
      *
-     * @var string|Fluent
+     * @var Fluent
      */
     protected $view;
 
@@ -52,7 +53,7 @@ class StringView extends View implements ArrayAccess, ViewContract
         } elseif ($view instanceof Arrayable) {
             $view = new Fluent($view);
         } elseif (is_string($view)) {
-            $view = new Fluent(['template' => $view]);
+            $view = new Fluent(['template' => $view, 'pagetype' => 'blade']);
         }
 
         parent::__construct($factory, $engine, $view, $view, $data);

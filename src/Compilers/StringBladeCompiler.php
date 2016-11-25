@@ -2,11 +2,32 @@
 
 namespace Wpb\String_Blade_Compiler\Compilers;
 
-use Config;
 use Illuminate\View\Compilers\CompilerInterface;
+use Twig_Environment;
+use Illuminate\Filesystem\Filesystem;
 
 class StringBladeCompiler extends BladeCompiler implements CompilerInterface
 {
+    /**
+     * @var \Twig_Environment
+     */
+    protected $twig;
+
+    /** @var  array */
+    protected $loadedTemplates;
+
+    /**
+     * Create a new compiler instance.
+     *
+     * @param  \Illuminate\Filesystem\Filesystem  $files
+     * @param  string  $cachePath
+     * @param  \Twig_Environment $twig
+     */
+    public function __construct(Filesystem $files, $cachePath, Twig_Environment $twig)
+    {
+        parent::__construct($files, $cachePath);
+        $this->twig = $twig;
+    }
 
     /**
      * Compile the view at the given path.
@@ -21,7 +42,48 @@ class StringBladeCompiler extends BladeCompiler implements CompilerInterface
         $string = $viewData->template;
 
         // Compile to PHP
-        $contents = $this->compileString($string);
+        switch ($viewData->pagetype) {
+            case 'blade':
+                $contents = $this->compileString($string);
+                break;
+
+            case 'twig':
+                // Compiling a twig template creates a file containing the definition
+                // for a class of name $cls.
+                $name = md5($string);
+                $cls = $this->twig->getTemplateClass($name);
+
+                // Check to see if the internal cache of the output is available.
+                if (isset($this->loadedTemplates[$cls])) {
+                    $contents = $this->loadedTemplates[$cls];
+                    break;
+                }
+
+                // Only compile if we have not already compiled.  If we have not
+                // already compiled, then compile and evaluate because that will
+                // create the class $cls.
+                if (! class_exists($cls, false)) {
+                    $twig_content = $this->twig->compileSource($string, $name);
+                    eval('?>' . $twig_content);
+                }
+
+                // Internally cache the contents
+                /** @var \Twig_Template $template */
+                $template = new $cls($this->twig);
+
+                // FIXME: The render function does not work here because it requires
+                // access to the data.  See the note in viewpages.  An alternative
+                // Engine is required.
+                $data = array();
+                $this->loadedTemplates[$cls] = $template->render($data);
+                $contents = $this->loadedTemplates[$cls];
+
+                break;
+
+            default:
+                $contents = $this->compileString($string);
+                break;
+        }
 
         // check/save cache
         if (! is_null($this->cachePath)) {
@@ -48,7 +110,7 @@ class StringBladeCompiler extends BladeCompiler implements CompilerInterface
     /**
      * Determine if the view at the given path is expired.
      *
-     * @param  string  $viewData
+     * @param  object  $viewData
      * @return bool
      */
     public function isExpired($viewData)

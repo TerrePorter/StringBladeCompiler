@@ -144,6 +144,25 @@ View::getEngineFromStringKey('stringblade')->setDeleteViewCacheAfterRender(true)
 View::getEngineFromStringKey('blade')->setDeleteViewCacheAfterRender(true);
 ```
 
+Notes on Twig and Loaders
+=======================
+
+In this release some basic Twig integration has been done by allowing a different `pagetype`
+element in the template ($viewData) array in the compiler to allow Twig templates to be
+compiled from strings.
+
+Note that this is not a full implementation because the Twig compiler (which can compile
+templates from strings, as it contains a compileSource() function) does not work unless it
+has been passed some kind of loader package which complies with the Twig_LoaderInterface
+interface.  Because in this package we are only interested in compiling strings, this
+package has not been provided.
+
+See https://github.com/rcrowe/TwigBridge for an implementation that includes a file based
+loader package.
+
+See https://github.com/delatbabel/viewpages for an alternative implementation which includes
+a database loader package.
+
 License
 =======================
 
