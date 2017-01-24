@@ -181,6 +181,18 @@ class FileViewFinder implements ViewFinderInterface
     }
 
     /**
+     * Replace the namespace hints for the given namespace.
+     *
+     * @param  string  $namespace
+     * @param  string|array  $hints
+     * @return void
+     */
+    public function replaceNamespace($namespace, $hints)
+    {
+        $this->hints[$namespace] = (array) $hints;
+    }
+
+    /**
      * Prepend a namespace hint to the finder.
      *
      * @param  string  $namespace

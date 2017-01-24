@@ -931,6 +931,18 @@ class Factory implements FactoryContract
     }
 
     /**
+     * Replace the namespace hints for the given namespace.
+     *
+     * @param  string  $namespace
+     * @param  string|array  $hints
+     * @return void
+     */
+    public function replaceNamespace($namespace, $hints)
+    {
+        $this->finder->replaceNamespace($namespace, $hints);
+    }
+
+    /**
      * Register a valid view extension and its engine.
      *
      * @param  string    $extension
