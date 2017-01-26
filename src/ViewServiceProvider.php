@@ -3,9 +3,10 @@
 namespace Wpb\String_Blade_Compiler;
 
 use Illuminate\View\Engines\EngineResolver;
-use Wpb\String_Blade_Compiler\Engines\CompilerEngine;
+use Illuminate\View\Engines\FileEngine;
 use Wpb\String_Blade_Compiler\Compilers\BladeCompiler;
 use Wpb\String_Blade_Compiler\Compilers\StringBladeCompiler;
+use Wpb\String_Blade_Compiler\Engines\CompilerEngine;
 
 class ViewServiceProvider extends \Illuminate\View\ViewServiceProvider
 {
@@ -46,11 +47,24 @@ class ViewServiceProvider extends \Illuminate\View\ViewServiceProvider
             // Next we will register the various engines with the resolver so that the
             // environment can resolve the engines it needs for various views based
             // on the extension of view files. We call a method for each engines.
-            foreach (['php', 'blade', 'StringBlade'] as $engine) {
+            foreach (['file', 'php', 'blade', 'StringBlade'] as $engine) {
                 $this->{'register'.ucfirst($engine).'Engine'}($resolver);
             }
 
             return $resolver;
+        });
+    }
+
+    /**
+     * Register the file engine implementation.
+     *
+     * @param  \Illuminate\View\Engines\EngineResolver  $resolver
+     * @return void
+     */
+    public function registerFileEngine($resolver)
+    {
+        $resolver->register('file', function () {
+            return new FileEngine;
         });
     }
 
