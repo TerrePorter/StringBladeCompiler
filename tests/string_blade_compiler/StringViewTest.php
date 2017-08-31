@@ -12,12 +12,12 @@ class StringViewTest extends PHPUnit_Framework_TestCase {
 
     public function testDataCanBeSetOnView()
     {
-        $view = new StringView(m::mock('Wpb\String_Blade_Compiler\Factory'), m::mock('Illuminate\View\Engines\EngineInterface'), ['secondsTemplateCacheExpires' => 0], 'path', []);
+        $view = new StringView(m::mock('Wpb\String_Blade_Compiler\Factory'), m::mock('Illuminate\Contracts\View\Engine'), ['secondsTemplateCacheExpires' => 0], 'path', []);
         $view->with('foo', 'bar');
         $view->with(['baz' => 'boom']);
         $this->assertEquals(['foo' => 'bar', 'baz' => 'boom'], $view->getData());
 
-        $view = new StringView(m::mock('Wpb\String_Blade_Compiler\Factory'), m::mock('Illuminate\View\Engines\EngineInterface'),  ['secondsTemplateCacheExpires' => 0], 'path', []);
+        $view = new StringView(m::mock('Wpb\String_Blade_Compiler\Factory'), m::mock('Illuminate\Contracts\View\Engine'),  ['secondsTemplateCacheExpires' => 0], 'path', []);
         $view->withFoo('bar')->withBaz('boom');
         $this->assertEquals(['foo' => 'bar', 'baz' => 'boom'], $view->getData());
     }
@@ -48,7 +48,7 @@ class StringViewTest extends PHPUnit_Framework_TestCase {
     {
         $view = m::mock('Wpb\String_Blade_Compiler\View[render]', [
             m::mock('Wpb\String_Blade_Compiler\Factory'),
-            m::mock('Illuminate\View\Engines\EngineInterface'),
+            m::mock('Illuminate\Contracts\View\Engine'),
             ['secondsTemplateCacheExpires' => 0],
             'path',
             [],
@@ -92,7 +92,7 @@ class StringViewTest extends PHPUnit_Framework_TestCase {
 
         $view = new StringView(
             m::mock('Wpb\String_Blade_Compiler\Factory'),
-            m::mock('Illuminate\View\Engines\EngineInterface'),
+            m::mock('Illuminate\Contracts\View\Engine'),
             ['secondsTemplateCacheExpires' => 0],
             'path',
             $arrayable->toArray() // StringView is not detecting the mock as a arrayable, no clue why
@@ -197,7 +197,7 @@ class StringViewTest extends PHPUnit_Framework_TestCase {
     {
         return new StringView(
             m::mock('Wpb\String_Blade_Compiler\Factory'),
-            m::mock('Illuminate\View\Engines\EngineInterface'),
+            m::mock('Illuminate\Contracts\View\Engine'),
             ['secondsTemplateCacheExpires' => 0],
             'path',
             ['foo' => 'bar']
