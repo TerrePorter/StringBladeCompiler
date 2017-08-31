@@ -9,10 +9,11 @@ use BadMethodCallException;
 use Illuminate\Support\Str;
 use Illuminate\Support\MessageBag;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Contracts\View\Engine;
+use Illuminate\View\Engines\EngineInterface;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Contracts\Support\MessageProvider;
 use Illuminate\Contracts\View\View as ViewContract;
+use Illuminate\Contracts\View\Engine as Engine;
 
 class View extends \Illuminate\View\View
 {
@@ -21,7 +22,7 @@ class View extends \Illuminate\View\View
      * Create a new view instance.
      *
      * @param  \Wpb\String_Blade_Compiler\Factory  $factory
-     * @param  \Illuminate\Contracts\View\Engine  $engine
+     * @param  \Illuminate\View\Engines\EngineInterface  $engine
      * @param  string  $view
      * @param  string  $path
      * @param  array   $data
