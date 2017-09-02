@@ -264,7 +264,7 @@ class Factory implements FactoryContract
      * Get the appropriate view engine for the given path.
      *
      * @param  string  $path
-     * @return \Illuminate\View\Engines\EngineInterface
+     * @return \Illuminate\Contracts\View\Engine
      *
      * @throws \InvalidArgumentException
      */
@@ -283,7 +283,7 @@ class Factory implements FactoryContract
      * Get the appropriate view engine for the given string key.
      *
      * @param  string  $stringkey
-     * @return \Illuminate\View\Engines\EngineInterface
+     * @return \Illuminate\Contracts\View\Engine
      *
      * @throws \InvalidArgumentException
      */

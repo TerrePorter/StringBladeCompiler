@@ -13,12 +13,12 @@ class ViewTest extends PHPUnit_Framework_TestCase {
 
     public function testDataCanBeSetOnView()
     {
-        $view = new View(m::mock('Wpb\String_Blade_Compiler\Factory'), m::mock('Illuminate\View\Engines\EngineInterface'), 'view', 'path', []);
+        $view = new View(m::mock('Wpb\String_Blade_Compiler\Factory'), m::mock('Illuminate\Contracts\View\Engine'), 'view', 'path', []);
         $view->with('foo', 'bar');
         $view->with(['baz' => 'boom']);
         $this->assertEquals(['foo' => 'bar', 'baz' => 'boom'], $view->getData());
 
-        $view = new View(m::mock('Wpb\String_Blade_Compiler\Factory'), m::mock('Illuminate\View\Engines\EngineInterface'), 'view', 'path', []);
+        $view = new View(m::mock('Wpb\String_Blade_Compiler\Factory'), m::mock('Illuminate\Contracts\View\Engine'), 'view', 'path', []);
         $view->withFoo('bar')->withBaz('boom');
         $this->assertEquals(['foo' => 'bar', 'baz' => 'boom'], $view->getData());
     }
@@ -45,7 +45,7 @@ class ViewTest extends PHPUnit_Framework_TestCase {
     {
         $view = m::mock('Wpb\String_Blade_Compiler\View[render]', [
             m::mock('Wpb\String_Blade_Compiler\Factory'),
-            m::mock('Illuminate\View\Engines\EngineInterface'),
+            m::mock('Illuminate\Contracts\View\Engine'),
             'view',
             'path',
             [],
@@ -86,7 +86,7 @@ class ViewTest extends PHPUnit_Framework_TestCase {
 
         $view = new View(
             m::mock('Wpb\String_Blade_Compiler\Factory'),
-            m::mock('Illuminate\View\Engines\EngineInterface'),
+            m::mock('Illuminate\Contracts\View\Engine'),
             'view',
             'path',
             $arrayable
@@ -190,7 +190,7 @@ class ViewTest extends PHPUnit_Framework_TestCase {
     {
         return new View(
             m::mock('Wpb\String_Blade_Compiler\Factory'),
-            m::mock('Illuminate\View\Engines\EngineInterface'),
+            m::mock('Illuminate\Contracts\View\Engine'),
             'view',
             'path',
             ['foo' => 'bar']

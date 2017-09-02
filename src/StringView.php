@@ -4,7 +4,7 @@ namespace Wpb\String_Blade_Compiler;
 
 use App, ArrayAccess;
 use Config;
-use Illuminate\View\Engines\EngineInterface;
+use Illuminate\Contracts\View\Engine;
 use Illuminate\Contracts\View\View as ViewContract;
 
 class StringView extends View implements ArrayAccess, ViewContract {
@@ -15,13 +15,13 @@ class StringView extends View implements ArrayAccess, ViewContract {
      * Create a new view instance.
      *
      * @param  \Wpb\String_Blade_Compiler\Factory  $factory
-     * @param  \Illuminate\View\Engines\EngineInterface  $engine
+     * @param  \Illuminate\Contracts\View\Engine  $engine
      * @param  string  $view
      * @param  string  $path
      * @param  array   $data
      *
      */
-    public function __construct(Factory $factory, EngineInterface $engine, $view, $path, $data = [])
+    public function __construct(Factory $factory, Engine $engine, $view, $path, $data = [])
     {
         // setup variables
         $this->view = (is_array($view))?(object) $view:$view;

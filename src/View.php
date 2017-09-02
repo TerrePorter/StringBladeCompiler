@@ -13,6 +13,7 @@ use Illuminate\View\Engines\EngineInterface;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Contracts\Support\MessageProvider;
 use Illuminate\Contracts\View\View as ViewContract;
+use Illuminate\Contracts\View\Engine as Engine;
 
 class View extends \Illuminate\View\View
 {
@@ -27,7 +28,7 @@ class View extends \Illuminate\View\View
      * @param  array   $data
      *
      */
-    public function __construct(Factory $factory, EngineInterface $engine, $view, $path, $data = [])
+    public function __construct(Factory $factory, Engine $engine, $view, $path, $data = [])
     {
         $this->view = $view;
         $this->path = $path;
