@@ -19,6 +19,11 @@ Version 3.2 is a version for Laravel 5.2.
 
 Version 3.3 is a version for Laravel 5.3.
 
+Version 3.4 is a version for Laravel 5.4.
+
+Version 3.5 is a version for Laravel 5.5.
+
+
 Installation
 =======================
 
