@@ -11,7 +11,6 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\View\Factory as FactoryContract;
 use Illuminate\View\ViewName;
 use Illuminate\View\Engines\EngineResolver;
-use Wpb\String_Blade_Compiler\StringView;
 
 class Factory implements FactoryContract
 {
@@ -158,6 +157,27 @@ class Factory implements FactoryContract
         return tap($this->stringViewInstance($view, $data), function ($view) {
                 $this->callCreator($view);
         });
+    }
+
+    /**
+     * Get the first view that actually exists from the given list.
+     *
+     * @param  array  $views
+     * @param  array   $data
+     * @param  array   $mergeData
+     * @return \Illuminate\Contracts\View\View|\Wpb\String_Blade_Compiler\StringView
+     */
+    public function first(array $views, $data = [], $mergeData = [])
+    {
+        $view = collect($views)->first(function ($view) {
+            return $this->exists($view);
+        });
+
+        if (! $view) {
+            throw new InvalidArgumentException('None of the views in the given array exist.');
+        }
+
+        return $this->make($view, $data, $mergeData);
     }
 
     /**
