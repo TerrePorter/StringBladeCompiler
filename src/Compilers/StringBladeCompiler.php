@@ -13,7 +13,7 @@ class StringBladeCompiler extends BladeCompiler implements CompilerInterface {
 	 * @param  object $viewData
 	 * @return void
 	 */
-	public function compile($viewData)
+	public function compile($viewData = null)
 	{
 
         // get the template data
