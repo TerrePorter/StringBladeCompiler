@@ -11,11 +11,11 @@
     ],
     "require": {
         "php": ">=5.6.4",
-        "laravel/framework": "5.5.*"
+        "laravel/framework": "5.6.*"
     },
     "autoload": {
         "psr-4": {
-            "Wpb\\String_Blade_Compiler\\": "src/"
+            "Illuminate\\Wpb\\String_Blade_Compiler\\": "src/"
         } 
     },
     "minimum-stability": "dev"

@@ -1,12 +1,12 @@
 <?php
 
-namespace Wpb\String_Blade_Compiler;
+namespace Illuminate\Wpb\String_Blade_Compiler;
 
 use Illuminate\View\Engines\EngineResolver;
 use Illuminate\View\Engines\FileEngine;
-use Wpb\String_Blade_Compiler\Compilers\BladeCompiler;
-use Wpb\String_Blade_Compiler\Compilers\StringBladeCompiler;
-use Wpb\String_Blade_Compiler\Engines\CompilerEngine;
+use Illuminate\Wpb\String_Blade_Compiler\Compilers\BladeCompiler;
+use Illuminate\Wpb\String_Blade_Compiler\Compilers\StringBladeCompiler;
+use Illuminate\Wpb\String_Blade_Compiler\Engines\CompilerEngine;
 
 class ViewServiceProvider extends \Illuminate\View\ViewServiceProvider
 {
@@ -18,7 +18,6 @@ class ViewServiceProvider extends \Illuminate\View\ViewServiceProvider
      */
     public function register()
     {
-
 
         // include the package config
         $this->mergeConfigFrom(

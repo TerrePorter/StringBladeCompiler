@@ -1,11 +1,11 @@
 <?php
 
-namespace Wpb\String_Blade_Compiler\Facades;
+namespace Illuminate\Wpb\String_Blade_Compiler\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @see Wpb\String_Blade_Compiler\Compilers\StringBladeCompiler
+ * @see Illuminate\Wpb\String_Blade_Compiler\Compilers\StringBladeCompiler
  */
 class StringBlade extends Facade
 {

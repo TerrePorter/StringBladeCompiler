@@ -1,6 +1,6 @@
 <?php
 
-namespace Wpb\String_Blade_Compiler;
+namespace Illuminate\Wpb\String_Blade_Compiler;
 
 use InvalidArgumentException;
 use Illuminate\Support\Arr;
@@ -31,7 +31,7 @@ class Factory implements FactoryContract
     /**
      * The view finder implementation.
      *
-     * @var \Wpb\String_Blade_Compiler\ViewFinderInterface
+     * @var \Illuminate\Wpb\String_Blade_Compiler\ViewFinderInterface
      */
     protected $finder;
 
@@ -85,7 +85,7 @@ class Factory implements FactoryContract
      * Create a new view factory instance.
      *
      * @param  \Illuminate\View\Engines\EngineResolver  $engines
-     * @param  \Wpb\String_Blade_Compiler\ViewFinderInterface  $finder
+     * @param  \Illuminate\Wpb\String_Blade_Compiler\ViewFinderInterface  $finder
      * @param  \Illuminate\Contracts\Events\Dispatcher  $events
      * @return void
      */
@@ -121,7 +121,7 @@ class Factory implements FactoryContract
      * @param  string|array  $view
      * @param  array   $data
      * @param  array   $mergeData
-     * @return \Illuminate\Contracts\View\View|\Wpb\String_Blade_Compiler\StringView
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Wpb\String_Blade_Compiler\StringView
      */
     public function make($view, $data = [], $mergeData = [])
     {
@@ -150,7 +150,7 @@ class Factory implements FactoryContract
      *
      * @param  array  $view
      * @param  array   $data
-     * @return \Wpb\String_Blade_Compiler\StringView
+     * @return \Illuminate\Wpb\String_Blade_Compiler\StringView
      */
     protected function makeStringView(array $view, $data=[])
     {
@@ -165,7 +165,7 @@ class Factory implements FactoryContract
      * @param  array  $views
      * @param  array   $data
      * @param  array   $mergeData
-     * @return \Illuminate\Contracts\View\View|\Wpb\String_Blade_Compiler\StringView
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Wpb\String_Blade_Compiler\StringView
      */
     public function first(array $views, $data = [], $mergeData = [])
     {
@@ -274,7 +274,7 @@ class Factory implements FactoryContract
      *
      * @param  string  $view
      * @param  array  $data
-     * @return \Wpb\String_Blade_Compiler\StringView
+     * @return \Illuminate\Wpb\String_Blade_Compiler\StringView
      */
     protected function stringViewInstance($view, $data)
     {
@@ -515,7 +515,7 @@ class Factory implements FactoryContract
     /**
      * Get the view finder instance.
      *
-     * @return \Wpb\String_Blade_Compiler\ViewFinderInterface
+     * @return \Illuminate\Wpb\String_Blade_Compiler\ViewFinderInterface
      */
     public function getFinder()
     {
@@ -525,7 +525,7 @@ class Factory implements FactoryContract
     /**
      * Set the view finder instance.
      *
-     * @param  \Wpb\String_Blade_Compiler\ViewFinderInterface  $finder
+     * @param  \Illuminate\Wpb\String_Blade_Compiler\ViewFinderInterface  $finder
      * @return void
      */
     public function setFinder(ViewFinderInterface $finder)

@@ -1,6 +1,6 @@
 <?php
 
-namespace Wpb\String_Blade_Compiler;
+namespace Illuminate\Wpb\String_Blade_Compiler;
 
 interface ViewFinderInterface
 {

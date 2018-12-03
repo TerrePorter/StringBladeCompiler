@@ -1,6 +1,6 @@
 <?php
 
-namespace Wpb\String_Blade_Compiler\Engines;
+namespace Illuminate\Wpb\String_Blade_Compiler\Engines;
 
 use Exception;
 use ErrorException;

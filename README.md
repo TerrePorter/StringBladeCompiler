@@ -41,7 +41,7 @@ To get versions 'composer show wpb/string-blade-compiler', such as 'dev-master, 
 
 In config\app.php, providers section:
 
-Replace 'Illuminate\View\ViewServiceProvider::class' with 'Wpb\String_Blade_Compiler\ViewServiceProvider::class',
+Replace 'Illuminate\View\ViewServiceProvider::class' with 'Illuminate\Wpb\String_Blade_Compiler\ViewServiceProvider::class',
 	
 There is no need to add a Facade to the aliases array as the service provider it is included automatically in the package's ServiceProvider.
 

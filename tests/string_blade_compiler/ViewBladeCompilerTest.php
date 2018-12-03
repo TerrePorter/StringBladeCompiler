@@ -1,7 +1,7 @@
 <?php
 
 use Mockery as m;
-use Wpb\String_Blade_Compiler\Compilers\BladeCompiler;
+use Illuminate\Wpb\String_Blade_Compiler\Compilers\BladeCompiler;
 
 class ViewBladeCompilerTest extends PHPUnit_Framework_TestCase
 {

@@ -1,7 +1,7 @@
 <?php
 
 use Mockery as m;
-use Wpb\String_Blade_Compiler\StringView;
+use Illuminate\Wpb\String_Blade_Compiler\StringView;
 
 class StringViewTest extends PHPUnit_Framework_TestCase {
 
@@ -12,12 +12,12 @@ class StringViewTest extends PHPUnit_Framework_TestCase {
 
     public function testDataCanBeSetOnView()
     {
-        $view = new StringView(m::mock('Wpb\String_Blade_Compiler\Factory'), m::mock('Illuminate\Contracts\View\Engine'), ['secondsTemplateCacheExpires' => 0], 'path', []);
+        $view = new StringView(m::mock('Illuminate\Wpb\String_Blade_Compiler\Factory'), m::mock('Illuminate\Contracts\View\Engine'), ['secondsTemplateCacheExpires' => 0], 'path', []);
         $view->with('foo', 'bar');
         $view->with(['baz' => 'boom']);
         $this->assertEquals(['foo' => 'bar', 'baz' => 'boom'], $view->getData());
 
-        $view = new StringView(m::mock('Wpb\String_Blade_Compiler\Factory'), m::mock('Illuminate\Contracts\View\Engine'),  ['secondsTemplateCacheExpires' => 0], 'path', []);
+        $view = new StringView(m::mock('Illuminate\Wpb\String_Blade_Compiler\Factory'), m::mock('Illuminate\Contracts\View\Engine'),  ['secondsTemplateCacheExpires' => 0], 'path', []);
         $view->withFoo('bar')->withBaz('boom');
         $this->assertEquals(['foo' => 'bar', 'baz' => 'boom'], $view->getData());
     }
@@ -46,8 +46,8 @@ class StringViewTest extends PHPUnit_Framework_TestCase {
 
     public function testRenderSectionsReturnsEnvironmentSections()
     {
-        $view = m::mock('Wpb\String_Blade_Compiler\View[render]', [
-            m::mock('Wpb\String_Blade_Compiler\Factory'),
+        $view = m::mock('Illuminate\Wpb\String_Blade_Compiler\View[render]', [
+            m::mock('Illuminate\Wpb\String_Blade_Compiler\Factory'),
             m::mock('Illuminate\Contracts\View\Engine'),
             ['secondsTemplateCacheExpires' => 0],
             'path',
@@ -82,7 +82,7 @@ class StringViewTest extends PHPUnit_Framework_TestCase {
         $view->getFactory()->shouldReceive('make')->once()->with('foo', ['data']);
         $result = $view->nest('key', 'foo', ['data']);
 
-        $this->assertInstanceOf('Wpb\String_Blade_Compiler\View', $result);
+        $this->assertInstanceOf('Illuminate\Wpb\String_Blade_Compiler\View', $result);
     }
 
     public function testViewAcceptsArrayableImplementations()
@@ -91,7 +91,7 @@ class StringViewTest extends PHPUnit_Framework_TestCase {
         $arrayable->shouldReceive('toArray')->once()->andReturn(['foo' => 'bar', 'baz' => ['qux', 'corge']]);
 
         $view = new StringView(
-            m::mock('Wpb\String_Blade_Compiler\Factory'),
+            m::mock('Illuminate\Wpb\String_Blade_Compiler\Factory'),
             m::mock('Illuminate\Contracts\View\Engine'),
             ['secondsTemplateCacheExpires' => 0],
             'path',
@@ -196,7 +196,7 @@ class StringViewTest extends PHPUnit_Framework_TestCase {
     protected function getView()
     {
         return new StringView(
-            m::mock('Wpb\String_Blade_Compiler\Factory'),
+            m::mock('Illuminate\Wpb\String_Blade_Compiler\Factory'),
             m::mock('Illuminate\Contracts\View\Engine'),
             ['secondsTemplateCacheExpires' => 0],
             'path',

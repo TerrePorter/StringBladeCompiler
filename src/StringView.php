@@ -1,6 +1,6 @@
 <?php
 
-namespace Wpb\String_Blade_Compiler;
+namespace Illuminate\Wpb\String_Blade_Compiler;
 
 use App, ArrayAccess;
 use Config;
@@ -14,7 +14,7 @@ class StringView extends View implements ArrayAccess, ViewContract {
     /**
      * Create a new view instance.
      *
-     * @param  \Wpb\String_Blade_Compiler\Factory  $factory
+     * @param  \Illuminate\Wpb\String_Blade_Compiler\Factory  $factory
      * @param  \Illuminate\Contracts\View\Engine  $engine
      * @param  string  $view
      * @param  string  $path

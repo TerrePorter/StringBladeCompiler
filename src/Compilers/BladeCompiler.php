@@ -1,6 +1,6 @@
 <?php
 
-namespace Wpb\String_Blade_Compiler\Compilers;
+namespace Illuminate\Wpb\String_Blade_Compiler\Compilers;
 
 class BladeCompiler extends \Illuminate\View\Compilers\BladeCompiler
 {

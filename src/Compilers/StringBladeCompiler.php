@@ -1,6 +1,6 @@
 <?php
 
-namespace Wpb\String_Blade_Compiler\Compilers;
+namespace Illuminate\Wpb\String_Blade_Compiler\Compilers;
 
 use Config;
 use Illuminate\View\Compilers\CompilerInterface;
@@ -13,7 +13,7 @@ class StringBladeCompiler extends BladeCompiler implements CompilerInterface {
 	 * @param  object $viewData
 	 * @return void
 	 */
-	public function compile($viewData=null)
+	public function compile($viewData = null)
 	{
 
         // get the template data

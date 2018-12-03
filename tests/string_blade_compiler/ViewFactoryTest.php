@@ -1,7 +1,7 @@
 <?php
 
 use Mockery as m;
-use Wpb\String_Blade_Compiler\Factory;
+use Illuminate\Wpb\String_Blade_Compiler\Factory;
 
 class ViewFactoryTest extends PHPUnit_Framework_TestCase
 {
@@ -77,7 +77,7 @@ class ViewFactoryTest extends PHPUnit_Framework_TestCase
 
     public function testRenderEachCreatesViewForEachItemInArray()
     {
-        $factory = m::mock('Wpb\String_Blade_Compiler\Factory[make]', $this->getFactoryArgs());
+        $factory = m::mock('Illuminate\Wpb\String_Blade_Compiler\Factory[make]', $this->getFactoryArgs());
         $factory->shouldReceive('make')->once()->with('foo', ['key' => 'bar', 'value' => 'baz'])->andReturn($mockView1 = m::mock('StdClass'));
         $factory->shouldReceive('make')->once()->with('foo', ['key' => 'breeze', 'value' => 'boom'])->andReturn($mockView2 = m::mock('StdClass'));
         $mockView1->shouldReceive('render')->once()->andReturn('dayle');
@@ -90,7 +90,7 @@ class ViewFactoryTest extends PHPUnit_Framework_TestCase
 
     public function testEmptyViewsCanBeReturnedFromRenderEach()
     {
-        $factory = m::mock('Wpb\String_Blade_Compiler\Factory[make]', $this->getFactoryArgs());
+        $factory = m::mock('Illuminate\Wpb\String_Blade_Compiler\Factory[make]', $this->getFactoryArgs());
         $factory->shouldReceive('make')->once()->with('foo')->andReturn($mockView = m::mock('StdClass'));
         $mockView->shouldReceive('render')->once()->andReturn('empty');
 
@@ -237,7 +237,7 @@ class ViewFactoryTest extends PHPUnit_Framework_TestCase
     public function testCallComposerCallsProperEvent()
     {
         $factory = $this->getFactory();
-        $view = m::mock('Wpb\String_Blade_Compiler\View');
+        $view = m::mock('Illuminate\Wpb\String_Blade_Compiler\View');
         $view->shouldReceive('getName')->once()->andReturn('name');
         $factory->getDispatcher()->shouldReceive('fire')->once()->with('composing: name', [$view]);
 
@@ -421,7 +421,7 @@ class ViewFactoryTest extends PHPUnit_Framework_TestCase
     {
         return new Factory(
             m::mock('Illuminate\View\Engines\EngineResolver'),
-            m::mock('Wpb\String_Blade_Compiler\ViewFinderInterface'),
+            m::mock('Illuminate\Wpb\String_Blade_Compiler\ViewFinderInterface'),
             m::mock('Illuminate\Contracts\Events\Dispatcher')
         );
     }
@@ -430,7 +430,7 @@ class ViewFactoryTest extends PHPUnit_Framework_TestCase
     {
         return [
             m::mock('Illuminate\View\Engines\EngineResolver'),
-            m::mock('Wpb\String_Blade_Compiler\ViewFinderInterface'),
+            m::mock('Illuminate\Wpb\String_Blade_Compiler\ViewFinderInterface'),
             m::mock('Illuminate\Contracts\Events\Dispatcher'),
         ];
     }
