@@ -31,9 +31,9 @@ class BladeCompiler extends \Illuminate\View\Compilers\BladeCompiler
             $whitespace = empty($matches[3]) ? '' : $matches[3].$matches[3];
 
             if ($this->contentTagsEscaped) {
-                $wrapped = sprintf('e(%s)', $this->compileEchoDefaults($matches[2]));
+                $wrapped = sprintf('e(%s)', $matches[2]);
             } else {
-                $wrapped = sprintf('%s', $this->compileEchoDefaults($matches[2]));
+                $wrapped = sprintf('%s', $matches[2]);
             }
 
             return $matches[1] ? substr($matches[0], 1) : '<?php echo '.$wrapped.'; ?>'.$whitespace;
@@ -55,7 +55,7 @@ class BladeCompiler extends \Illuminate\View\Compilers\BladeCompiler
         $callback = function ($matches) {
             $whitespace = empty($matches[2]) ? '' : $matches[2].$matches[2];
 
-            return '<?php echo e('.$this->compileEchoDefaults($matches[1]).'); ?>'.$whitespace;
+            return '<?php echo e('.$matches[1].'); ?>'.$whitespace;
         };
 
         return preg_replace_callback($pattern, $callback, $value);
