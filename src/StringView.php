@@ -75,6 +75,16 @@ class StringView extends View implements ArrayAccess, ViewContract {
         return (isset($this->view->template)?md5($this->view->template):'StringViewTemplate');
     }
 
+    /**
+     * Get the array of view data.
+     *
+     * @return array
+     */
+    public function getData()
+    {
+        return $this->data;
+    }
+
 	/**
 	 * Get a evaluated view contents for the given view.
 	 *
