@@ -16,7 +16,7 @@
     "autoload": {
         "psr-4": {
             "Wpb\\String_Blade_Compiler\\": "src/"
-        } 
+        }
     },
     "minimum-stability": "dev"
 }
