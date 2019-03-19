@@ -1,6 +1,6 @@
 String Blade Compiler
 =======================
-[![Laravel 5.2](https://img.shields.io/badge/Laravel-5.2-orange.svg?style=flat-square)](http://laravel.com)
+[![Laravel 5.7](https://img.shields.io/badge/Laravel-5.7-orange.svg?style=flat-square)](http://laravel.com)
 [![License](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](https://tldrlegal.com/license/mit-license)
 
 Render Blade templates from string value.
@@ -23,6 +23,10 @@ Version 3.4 is a version for Laravel 5.4.
 
 Version 3.5 is a version for Laravel 5.5.
 
+Version 3.6 is a version for Laravel 5.6.
+
+Version 3.7 is a version for Laravel 5.7.
+
 Installation
 =======================
 
@@ -36,7 +40,7 @@ Add the package to composer.json:
 On packagist.org at https://packagist.org/packages/wpb/string-blade-compiler
 	
 Or from the console using require: composer require "wpb/string-blade-compiler"
- 	
+
 To get versions 'composer show wpb/string-blade-compiler', such as 'dev-master, * 3.2.x-dev, 3.2.0, 3.0.x-dev, 3.0.0, 2.1.0, 2.0.x-dev, 2.0.0, 1.0.x-dev, 1.0.0'
 
 In config\app.php, providers section:
