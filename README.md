@@ -23,6 +23,12 @@ Version 3.4 is a version for Laravel 5.4.
 
 Version 3.5 is a version for Laravel 5.5.
 
+Version 3.6 is a version for Laravel 5.6.
+
+Version 3.7 is a version for Laravel 5.7.
+
+Version 3.8 is a version for Laravel 5.8.
+
 Installation
 =======================
 
