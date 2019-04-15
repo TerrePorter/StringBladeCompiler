@@ -80,11 +80,11 @@ Usage
 
 This package offers a StringView facade with the same syntax as View but accepts a Array or Array Object instance instead of path to view.
 
-####New Config Option:
+### New Config Option:
 
 Laravel 5.8 BladeCompiler adds a php comment to the compiled template file ```php $contents .= "<?php /**PATH {$this->getPath()} ENDPATH**/ ?>"; ```. Since StringBladeCompiler does not have a "path" aka "template file location" that would be helpful to the developer. I have included a new config value, ```templateRefKey```. This allows the developer to tag the StringBladeCompiler for where it is used. This is for if you end up digging in to the compiled view files, it would allow you to see a tag for StingBladeCompiler files.
 
-####Config Options:
+### Config Options:
 
 ```php
 // existing file template load (the original View() method
@@ -126,7 +126,7 @@ return view(
 
 > Since StringBlade is a extend class from the original View. You should be able to do anything you would normally do with a View using StringBlade.
 
-Blade::extend, for example :
+### Blade::extend, for example :
 
 As the compilers are set up as separate instances, if you need the extend on both the string and file template you will need to attach the extend (or directive) to both compilers.
 
@@ -143,7 +143,7 @@ Blade::extend(function($value)
 });
 ```
 
-Other options,
+### Other options,
 
 ```php
 // change the contente tags escaped or not
