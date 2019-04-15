@@ -2,20 +2,26 @@
 
 namespace Wpb\String_Blade_Compiler;
 
-use App, ArrayAccess;
-use Config;
-use Illuminate\Contracts\View\Engine;
+use Exception;
+use Throwable;
+use ArrayAccess;
+use BadMethodCallException;
+use Illuminate\Support\Str;
+use Illuminate\Support\MessageBag;
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Contracts\Support\MessageProvider;
 use Illuminate\Contracts\View\View as ViewContract;
+use Illuminate\Contracts\View\Engine as Engine;
 
-class StringView extends View implements ArrayAccess, ViewContract {
-
-	protected $template_field = 'template';
+class StringView extends View
+{
 
     /**
      * Create a new view instance.
      *
-     * @param  \Wpb\String_Blade_Compiler\Factory  $factory
-     * @param  \Illuminate\Contracts\View\Engine  $engine
+     * @param  Factory  $factory
+     * @param  Engine  $engine
      * @param  string  $view
      * @param  string  $path
      * @param  array   $data
@@ -23,20 +29,12 @@ class StringView extends View implements ArrayAccess, ViewContract {
      */
     public function __construct(Factory $factory, Engine $engine, $view, $path, $data = [])
     {
-        // setup variables
         $this->view = (is_array($view))?(object) $view:$view;
-        $this->path = $this->view;
+        $this->path = $path;
         $this->engine = $engine;
         $this->factory = $factory;
 
-        $this->data = $this->parseData($data);
-
-        //$this->data = $data instanceof Arrayable ? $data->toArray() : (array) $data;
-
-       // if ($data instanceof Arrayable) {
-        //    var_dump($this->data);
-        //}
-
+        $this->data = $data instanceof Arrayable ? $data->toArray() : (array) $data;
 
         // check if view has secondsTemplateCacheExpires set, or get from config
         if ( !property_exists($this->view, "secondsTemplateCacheExpires") || !is_numeric($this->view->secondsTemplateCacheExpires) ) {
@@ -63,7 +61,11 @@ class StringView extends View implements ArrayAccess, ViewContract {
                 $this->view->cache_key = md5($this->view->template);
             }
         }
-	}
+    }
+
+    public function getViewTemplate() {
+        return $this->view->template;
+    }
 
     /**
      * Get the name of the view.
@@ -76,76 +78,46 @@ class StringView extends View implements ArrayAccess, ViewContract {
     }
 
     /**
-     * Get the array of view data.
-     *
-     * @return array
-     */
-    public function getData()
-    {
-        return $this->data;
-    }
-
-	/**
-	 * Get a evaluated view contents for the given view.
-	 *
-	 * @param  object  $view
-	 * @param  array   $data
-	 * @param  array   $mergeData
-	 * @return \Illuminate\View\View
-     * @throws \Exception
-	 */
-	public function make($view, $data = array(), $mergeData = array())
-	{
-        $this->path = $view;
-        $this->data = array_merge($mergeData, $this->parseData($data));
-        return $this;
-	}
-
-    /**
      * Get the evaluated contents of the view.
      *
      * @return string
      */
-	protected function getContents()
-	{
+    protected function getContents()
+    {
+
+
         /**
-        * This property will be added to models being compiled with StringView
-        * to keep track of which field in the model is being compiled
-        */
-        $this->path->__string_blade_compiler_template_field = $this->template_field;
+         * This property will be added to models being compiled with StringView
+         * to keep track of which field in the model is being compiled
+         */
+        //$this->path->__string_blade_compiler_template_field = $this->template_field;
+
+        if (is_null($this->path)) {
+            return $this->engine->get($this->view, $this->gatherData());
+        }
 
         return $this->engine->get($this->path, $this->gatherData());
-		//return parent::getContents();
-	}
+        //return parent::getContents();
+    }
 
-	/**
-	 * Parse the given data into a raw array.
-	 *
-	 * @param  mixed  $data
-	 * @return array
-	 */
-	protected function parseData($data)
-	{
-		return $data instanceof Arrayable ? $data->toArray() : $data;
-	}
-
-   /**
-    * Checks if a string is a valid timestamp.
-    * from https://gist.github.com/sepehr/6351385
-    *
-    * @param string $timestamp Timestamp to validate.
-    *
-    * @return bool
-    */
+    /**
+     * Checks if a string is a valid timestamp.
+     * from https://gist.github.com/sepehr/6351385
+     *
+     * @param string $timestamp Timestamp to validate.
+     *
+     * @return bool
+     */
     function is_timestamp($timestamp)
     {
         $check = (is_int($timestamp) OR is_float($timestamp))
-        ? $timestamp
-        : (string) (int) $timestamp;
+            ? $timestamp
+            : (string) (int) $timestamp;
 
         return ($check === $timestamp)
-        AND ( (int) $timestamp <= PHP_INT_MAX)
-        AND ( (int) $timestamp >= ~PHP_INT_MAX);
+            AND ( (int) $timestamp <= PHP_INT_MAX)
+            AND ( (int) $timestamp >= ~PHP_INT_MAX);
     }
-}
 
+
+}

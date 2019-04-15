@@ -2,7 +2,9 @@
 
 namespace Wpb\String_Blade_Compiler\Compilers;
 
-class BladeCompiler extends \Illuminate\View\Compilers\BladeCompiler
+use Illuminate\View\Compilers\BladeCompiler as BladeCompilerParent;
+
+class BladeCompiler extends BladeCompilerParent
 {
 
     /**
@@ -13,56 +15,52 @@ class BladeCompiler extends \Illuminate\View\Compilers\BladeCompiler
     /**
      * Switch to track escape setting for contentTags.
      *
+     * @deprecated Just use the escape tags {{{ }}} default
+     *
      * @var bool
      */
-    protected $contentTagsEscaped = true;
+    // protected $contentTagsEscaped = true;
 
     /**
-     * Compile the "regular" echo statements.
+     * Array of opening and closing tags for raw echos.
      *
-     * @param  string  $value
-     * @return string
+     * @var array
      */
-    protected function compileRegularEchos($value)
-    {
-        $pattern = sprintf('/(@)?%s\s*(.+?)\s*%s(\r?\n)?/s', $this->contentTags[0], $this->contentTags[1]);
-
-        $callback = function ($matches) {
-            $whitespace = empty($matches[3]) ? '' : $matches[3].$matches[3];
-
-            if ($this->contentTagsEscaped) {
-                $wrapped = sprintf('e(%s)', $matches[2]);
-            } else {
-                $wrapped = sprintf('%s', $matches[2]);
-            }
-
-            return $matches[1] ? substr($matches[0], 1) : '<?php echo '.$wrapped.'; ?>'.$whitespace;
-        };
-
-        return preg_replace_callback($pattern, $callback, $value);
-    }
+    protected $rawTags = ['{!!', '!!}'];
 
     /**
-     * Compile the escaped echo statements.
+     * Array of opening and closing tags for regular echos.
      *
-     * @param  string  $value
-     * @return string
+     * @var array
      */
-    protected function compileEscapedEchos($value)
+    protected $contentTags = ['{{', '}}'];
+
+    /**
+     * Array of opening and closing tags for escaped echos.
+     *
+     * @var array
+     */
+    protected $escapedTags = ['{{{', '}}}'];
+
+    /**
+     * Sets the content tags used for the compiler.
+     *
+     * @deprecated This feature was removed from Laravel (https://github.com/laravel/framework/issues/17736)
+     *
+     * @param  string  $openTag
+     * @param  string  $closeTag
+     * @param  bool    $escaped
+     * @return void
+     */
+    public function setRawTags($openTag, $closeTag, $escaped = true)
     {
-        $pattern = sprintf('/%s\s*(.+?)\s*%s(\r?\n)?/s', $this->escapedTags[0], $this->escapedTags[1]);
-
-        $callback = function ($matches) {
-            $whitespace = empty($matches[2]) ? '' : $matches[2].$matches[2];
-
-            return '<?php echo e('.$matches[1].'); ?>'.$whitespace;
-        };
-
-        return preg_replace_callback($pattern, $callback, $value);
+        $this->rawTags = [preg_quote($openTag), preg_quote($closeTag)];
     }
 
     /**
      * Sets the content tags used for the compiler.
+     *
+     * @deprecated This feature was removed from Laravel (https://github.com/laravel/framework/issues/17736)
      *
      * @param  string  $openTag
      * @param  string  $closeTag
@@ -71,31 +69,22 @@ class BladeCompiler extends \Illuminate\View\Compilers\BladeCompiler
      */
     public function setContentTags($openTag, $closeTag, $escaped = true)
     {
-        $this->setContentTagsEscaped($escaped);
-
         $this->contentTags = [preg_quote($openTag), preg_quote($closeTag)];
     }
 
     /**
-     * Sets the escaped content tags used for the compiler.
+     * Sets the escape tags used for the compiler.
+     *
+     * @deprecated This feature was removed from Laravel (https://github.com/laravel/framework/issues/17736)
      *
      * @param  string  $openTag
      * @param  string  $closeTag
+     * @param  bool    $escaped
      * @return void
      */
-    public function setEscapedContentTags($openTag, $closeTag)
+    public function setEscapeTags($openTag, $closeTag, $escaped = true)
     {
-        $this->escapedTags = array(preg_quote($openTag), preg_quote($closeTag));
-    }
-
-    /**
-     * Enable/Disable escape setting for contentTags.
-     *
-     * @param  bool  $escaped
-     * @return void
-     */
-    public function setContentTagsEscaped($escaped = true) {
-        $this->contentTagsEscaped = $escaped;
+        $this->escapedTags = [preg_quote($openTag), preg_quote($closeTag)];
     }
 
     /**
@@ -125,14 +114,4 @@ class BladeCompiler extends \Illuminate\View\Compilers\BladeCompiler
         return parent::isExpired($path);
     }
 
-    /**
-     * Set the echo format to be used by the compiler.
-     *
-     * Removed in custom version
-     *
-     * @deprecated deprecated since version 1.0.0
-     * @param  string  $format
-     * @return void     *
-     */
-    public function setEchoFormat($format) {}
 }

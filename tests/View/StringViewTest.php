@@ -1,70 +1,112 @@
 <?php
 
+namespace Wpb\String_Blade_Compiler\Tests\View;
+
+use Closure;
+use ArrayAccess;
 use Mockery as m;
-use Wpb\String_Blade_Compiler\View;
+//use Illuminate\View\View;
+use Wpb\String_Blade_Compiler\StringView as View;
+use BadMethodCallException;
+//use Illuminate\View\Factory;
+use Wpb\String_Blade_Compiler\Factory;
+use PHPUnit\Framework\TestCase;
+use Illuminate\Support\MessageBag;
+use Illuminate\Contracts\View\Engine;
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Renderable;
 
-
-class ViewTest extends PHPUnit_Framework_TestCase {
-
-    public function tearDown()
+class StringViewTest extends TestCase
+{
+    protected function tearDown(): void
     {
         m::close();
     }
 
     public function testDataCanBeSetOnView()
     {
-        $view = new View(m::mock('Wpb\String_Blade_Compiler\Factory'), m::mock('Illuminate\Contracts\View\Engine'), 'view', 'path', []);
+        $view = $this->getView();
         $view->with('foo', 'bar');
         $view->with(['baz' => 'boom']);
         $this->assertEquals(['foo' => 'bar', 'baz' => 'boom'], $view->getData());
 
-        $view = new View(m::mock('Wpb\String_Blade_Compiler\Factory'), m::mock('Illuminate\Contracts\View\Engine'), 'view', 'path', []);
+        $view = $this->getView();
         $view->withFoo('bar')->withBaz('boom');
         $this->assertEquals(['foo' => 'bar', 'baz' => 'boom'], $view->getData());
     }
 
     public function testRenderProperlyRendersView()
     {
-        $view = $this->getView();
+        $view = $this->getView(['foo' => 'bar']);
         $view->getFactory()->shouldReceive('incrementRender')->once()->ordered();
         $view->getFactory()->shouldReceive('callComposer')->once()->ordered()->with($view);
         $view->getFactory()->shouldReceive('getShared')->once()->andReturn(['shared' => 'foo']);
         $view->getEngine()->shouldReceive('get')->once()->with('path', ['foo' => 'bar', 'shared' => 'foo'])->andReturn('contents');
         $view->getFactory()->shouldReceive('decrementRender')->once()->ordered();
-        $view->getFactory()->shouldReceive('flushSectionsIfDoneRendering')->once();
+        $view->getFactory()->shouldReceive('flushStateIfDoneRendering')->once();
 
-        $me = $this;
-        $callback = function (View $rendered, $contents) use ($me, $view) {
-            $me->assertEquals($view, $rendered);
-            $me->assertEquals('contents', $contents);
+        $callback = function (View $rendered, $contents) use ($view) {
+            $this->assertEquals($view, $rendered);
+            $this->assertEquals('contents', $contents);
         };
+
         $this->assertEquals('contents', $view->render($callback));
+    }
+
+    public function testRenderHandlingCallbackReturnValues()
+    {
+        $view = $this->getView();
+        $view->getFactory()->shouldReceive('incrementRender');
+        $view->getFactory()->shouldReceive('callComposer');
+        $view->getFactory()->shouldReceive('getShared')->andReturn(['shared' => 'foo']);
+        $view->getEngine()->shouldReceive('get')->andReturn('contents');
+        $view->getFactory()->shouldReceive('decrementRender');
+        $view->getFactory()->shouldReceive('flushStateIfDoneRendering');
+
+        $this->assertEquals('new contents', $view->render(function () {
+            return 'new contents';
+        }));
+
+        $this->assertEmpty($view->render(function () {
+            return '';
+        }));
+
+        $this->assertEquals('contents', $view->render(function () {
+            //
+        }));
     }
 
     public function testRenderSectionsReturnsEnvironmentSections()
     {
-        $view = m::mock('Wpb\String_Blade_Compiler\View[render]', [
-            m::mock('Wpb\String_Blade_Compiler\Factory'),
-            m::mock('Illuminate\Contracts\View\Engine'),
-            'view',
+        $view = m::mock(View::class.'[render]', [
+            m::mock(Factory::class),
+            m::mock(Engine::class),
+            [
+                // this actual blade template
+                'template'  => '{{ $token1 }}',
+                // this is the cache file key, converted to md5
+                'cache_key' => 'my_unique_cache_key',
+                // number of seconds needed in order to recompile, 0 is always recompile
+                'secondsTemplateCacheExpires' => 1391973007
+            ],
             'path',
             [],
         ]);
 
-        $view->shouldReceive('render')->with(m::type('Closure'))->once()->andReturn($sections = ['foo' => 'bar']);
+        $view->shouldReceive('render')->with(m::type(Closure::class))->once()->andReturn($sections = ['foo' => 'bar']);
 
         $this->assertEquals($sections, $view->renderSections());
     }
 
     public function testSectionsAreNotFlushedWhenNotDoneRendering()
     {
-        $view = $this->getView();
+        $view = $this->getView(['foo' => 'bar']);
         $view->getFactory()->shouldReceive('incrementRender')->twice();
         $view->getFactory()->shouldReceive('callComposer')->twice()->with($view);
         $view->getFactory()->shouldReceive('getShared')->twice()->andReturn(['shared' => 'foo']);
         $view->getEngine()->shouldReceive('get')->twice()->with('path', ['foo' => 'bar', 'shared' => 'foo'])->andReturn('contents');
         $view->getFactory()->shouldReceive('decrementRender')->twice();
-        $view->getFactory()->shouldReceive('flushSectionsIfDoneRendering')->twice();
+        $view->getFactory()->shouldReceive('flushStateIfDoneRendering')->twice();
 
         $this->assertEquals('contents', $view->render());
         $this->assertEquals('contents', (string) $view);
@@ -76,21 +118,15 @@ class ViewTest extends PHPUnit_Framework_TestCase {
         $view->getFactory()->shouldReceive('make')->once()->with('foo', ['data']);
         $result = $view->nest('key', 'foo', ['data']);
 
-        $this->assertInstanceOf('Wpb\String_Blade_Compiler\View', $result);
+        $this->assertInstanceOf(View::class, $result);
     }
 
     public function testViewAcceptsArrayableImplementations()
     {
-        $arrayable = m::mock('Illuminate\Contracts\Support\Arrayable');
+        $arrayable = m::mock(Arrayable::class);
         $arrayable->shouldReceive('toArray')->once()->andReturn(['foo' => 'bar', 'baz' => ['qux', 'corge']]);
 
-        $view = new View(
-            m::mock('Wpb\String_Blade_Compiler\Factory'),
-            m::mock('Illuminate\Contracts\View\Engine'),
-            'view',
-            'path',
-            $arrayable
-        );
+        $view = $this->getView($arrayable);
 
         $this->assertEquals('bar', $view->foo);
         $this->assertEquals(['qux', 'corge'], $view->baz);
@@ -98,8 +134,8 @@ class ViewTest extends PHPUnit_Framework_TestCase {
 
     public function testViewGettersSetters()
     {
-        $view = $this->getView();
-        $this->assertEquals($view->getName(), 'view');
+        $view = $this->getView(['foo' => 'bar']);
+        $this->assertEquals($view->name(), md5($view->getViewTemplate()));
         $this->assertEquals($view->getPath(), 'path');
         $data = $view->getData();
         $this->assertEquals($data['foo'], 'bar');
@@ -109,8 +145,20 @@ class ViewTest extends PHPUnit_Framework_TestCase {
 
     public function testViewArrayAccess()
     {
-        $view = $this->getView();
-        $this->assertInstanceOf('ArrayAccess', $view);
+        $view = $this->getView(['foo' => 'bar']);
+        $this->assertInstanceOf(ArrayAccess::class, $view);
+        $this->assertTrue($view->offsetExists('foo'));
+        $this->assertEquals($view->offsetGet('foo'), 'bar');
+        $view->offsetSet('foo', 'baz');
+        $this->assertEquals($view->offsetGet('foo'), 'baz');
+        $view->offsetUnset('foo');
+        $this->assertFalse($view->offsetExists('foo'));
+    }
+
+    public function testViewConstructedWithObjectData()
+    {
+        $view = $this->getView(new DataObjectStub);
+        $this->assertInstanceOf(ArrayAccess::class, $view);
         $this->assertTrue($view->offsetExists('foo'));
         $this->assertEquals($view->offsetGet('foo'), 'bar');
         $view->offsetSet('foo', 'baz');
@@ -121,7 +169,7 @@ class ViewTest extends PHPUnit_Framework_TestCase {
 
     public function testViewMagicMethods()
     {
-        $view = $this->getView();
+        $view = $this->getView(['foo' => 'bar']);
         $this->assertTrue(isset($view->foo));
         $this->assertEquals($view->foo, 'bar');
         $view->foo = 'baz';
@@ -134,7 +182,9 @@ class ViewTest extends PHPUnit_Framework_TestCase {
 
     public function testViewBadMethod()
     {
-        $this->setExpectedException('BadMethodCallException');
+        $this->expectException(BadMethodCallException::class);
+        $this->expectExceptionMessage('Method Wpb\String_Blade_Compiler\StringView::badMethodCall does not exist.');
+
         $view = $this->getView();
         $view->badMethodCall();
     }
@@ -147,9 +197,9 @@ class ViewTest extends PHPUnit_Framework_TestCase {
         $view->getFactory()->shouldReceive('getShared')->once()->andReturn(['shared' => 'foo']);
         $view->getEngine()->shouldReceive('get')->once()->andReturn('contents');
         $view->getFactory()->shouldReceive('decrementRender')->once()->ordered();
-        $view->getFactory()->shouldReceive('flushSectionsIfDoneRendering')->once();
+        $view->getFactory()->shouldReceive('flushStateIfDoneRendering')->once();
 
-        $view->renderable = m::mock('Illuminate\Contracts\Support\Renderable');
+        $view->renderable = m::mock(Renderable::class);
         $view->renderable->shouldReceive('render')->once()->andReturn('text');
         $this->assertEquals('contents', $view->render());
     }
@@ -162,7 +212,7 @@ class ViewTest extends PHPUnit_Framework_TestCase {
         $view->getFactory()->shouldReceive('getShared')->once()->andReturn(['shared' => 'foo']);
         $view->getEngine()->shouldReceive('get')->once()->andReturn('contents');
         $view->getFactory()->shouldReceive('decrementRender')->once()->ordered();
-        $view->getFactory()->shouldReceive('flushSectionsIfDoneRendering')->once();
+        $view->getFactory()->shouldReceive('flushStateIfDoneRendering')->once();
 
         $view->getFactory()->shouldReceive('getSections')->once()->andReturn(['foo', 'bar']);
         $sections = $view->renderSections();
@@ -175,25 +225,32 @@ class ViewTest extends PHPUnit_Framework_TestCase {
         $view = $this->getView();
         $errors = ['foo' => 'bar', 'qu' => 'ux'];
         $this->assertSame($view, $view->withErrors($errors));
-        $this->assertInstanceOf('Illuminate\Support\MessageBag', $view->errors);
+        $this->assertInstanceOf(MessageBag::class, $view->errors);
         $foo = $view->errors->get('foo');
         $this->assertEquals($foo[0], 'bar');
         $qu = $view->errors->get('qu');
         $this->assertEquals($qu[0], 'ux');
         $data = ['foo' => 'baz'];
-        $this->assertSame($view, $view->withErrors(new \Illuminate\Support\MessageBag($data)));
+        $this->assertSame($view, $view->withErrors(new MessageBag($data)));
         $foo = $view->errors->get('foo');
         $this->assertEquals($foo[0], 'baz');
     }
 
-    protected function getView()
+    protected function getView($data = [])
     {
         return new View(
-            m::mock('Wpb\String_Blade_Compiler\Factory'),
-            m::mock('Illuminate\Contracts\View\Engine'),
-            'view',
+            m::mock(Factory::class),
+            m::mock(Engine::class),
+            [
+                // this actual blade template
+                'template'  => '{{ $token1 }}',
+                // this is the cache file key, converted to md5
+                'cache_key' => 'my_unique_cache_key',
+                // number of seconds needed in order to recompile, 0 is always recompile
+                'secondsTemplateCacheExpires' => 1391973007
+            ],
             'path',
-            ['foo' => 'bar']
+            $data
         );
     }
 }

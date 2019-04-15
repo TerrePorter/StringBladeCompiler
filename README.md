@@ -1,33 +1,40 @@
 String Blade Compiler
 =======================
-[![Laravel 5.2](https://img.shields.io/badge/Laravel-5.2-orange.svg?style=flat-square)](http://laravel.com)
+[![Laravel 5.8](https://img.shields.io/badge/Laravel-5.8-orange.svg?style=flat-square)](http://laravel.com)
 [![License](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](https://tldrlegal.com/license/mit-license)
 
 Render Blade templates from string value.
 
 Reworked version to allow for array to be passed to the view function instead of template file name.
 
-This is a direct extension of \Illuminate\View\View and replaces the default.
+> This is a direct extension of \Illuminate\View\View and is build to replace its usage. It will replace the default View instance.
 
-Version
+Versions
 =======================
-This version 1 is for Laravel 4.2, version 2 is for Laravel 5.
+| String Blade  | Laravel Version | 
+| ------------- |----------------:|
+| 3.8           | Laravel 5.8     |
+| 3.7           | Laravel 5.7     |
+| 3.6           | Laravel 5.6     |
+| 3.5           | Laravel 5.5     |
+| 3.4           | Laravel 5.4     |
+| 3.3           | Laravel 5.2     |
+| 3.2           | Laravel 5.1     |
+| 2.*           | Laravel 5       |
+| 1.*           | Laravel 4.2     |
 
-Version 3 is a complete rewrite, for Laravel 5.1
+Version 3.8 : Updates
+=======================
+> The package has been completely rewritten, all code updated to be more in line with the Laravel version code. Several of the functions in the extended class were not needed and have been removed and the code has been cleaned up a bit. 
 
-Version 3.2 is a version for Laravel 5.2.
+> Also updated the tests to what is available in Laravel View Tests. Some are not applicable to StringBlade.
 
-Version 3.3 is a version for Laravel 5.3.
-
-Version 3.4 is a version for Laravel 5.4.
-
-Version 3.5 is a version for Laravel 5.5.
-
-Version 3.6 is a version for Laravel 5.6.
-
-Version 3.7 is a version for Laravel 5.7.
-
-Version 3.8 is a version for Laravel 5.8.
+Changes, 
+- Now uses Laravel auto registration feature.
+- No long need to remove ```Illuminate\View\ViewServiceProvider::class``` from ```config/app.php```
+- The ability to ```setRawTags```, ```setContentTags```, and ```setEscapedTags``` have been removed from Laravel (https://github.com/laravel/framework/issues/17736). They are depreciated here. 
+- The compiler function ```setDeleteViewCacheAfterRender```, has been deprecated as I didn't find any code where it was actually being used.
+- Added more tests
 
 Installation
 =======================
@@ -39,17 +46,27 @@ Add the package to composer.json:
 		"wpb/string-blade-compiler": "VERSION"
 	},
 	
+> To get versions 'composer show wpb/string-blade-compiler', such as 'dev-master, * 3.2.x-dev, 3.2.0, 3.0.x-dev, 3.0.0, 2.1.0, 2.0.x-dev, 2.0.0, 1.0.x-dev, 1.0.0'
+
 On packagist.org at https://packagist.org/packages/wpb/string-blade-compiler
 	
-Or from the console using require: composer require "wpb/string-blade-compiler"
+    composer require "wpb/string-blade-compiler"
  	
-To get versions 'composer show wpb/string-blade-compiler', such as 'dev-master, * 3.2.x-dev, 3.2.0, 3.0.x-dev, 3.0.0, 2.1.0, 2.0.x-dev, 2.0.0, 1.0.x-dev, 1.0.0'
+Configuration
+=======================
 
 In config\app.php, providers section:
 
-Replace 'Illuminate\View\ViewServiceProvider::class' with 'Wpb\String_Blade_Compiler\ViewServiceProvider::class',
-	
-There is no need to add a Facade to the aliases array as the service provider it is included automatically in the package's ServiceProvider.
+> Both the ServiceProvider and Facade Alias are auto registered by Laravel. There is no need to add them to the /config/app.php file.
+
+~~Replace 'Illuminate\View\ViewServiceProvider::class' with 'Wpb\String_Blade_Compiler\ViewServiceProvider::class',~~
+> This version does not require you to remove the registration of the original view component. Upon ServiceProvider registration it will replace the view binds with its self.
+
+### Laravel's Autoloader
+
+> There currently is a issue in Laravel's preload process of ServiceProviders. Service providers that are registered with the autoloaded are instantiated before service providers that are set in /config/app.php. This may cause problems in prior versions of StringBladeCompiler. The version has been rewitten to account for the autoloading process. 
+
+> **However, ** This could be an issue if any packages tries to use the StringBlade before it has been registered. A pull request has been filed to make Package Service Providers that are registered in /config/app.php be loaded before autoloaded ServiceProviders. The would allow manual registration of the package which would give it priority over autoload packages. 
 
 Config
 =======================
@@ -58,95 +75,108 @@ Default cache time for the compiled string template is 300 seconds (5 mins), thi
 
 Note: If using homestead or some other vm, the host handles the filemtime of the cache file. This means the vm may have a different time than the file. If the cache is not expiring as expected, check the times between the systems.
 
-Note: See new option below to delete view cache after rendering (works for both stringblade and blade compilers).
-
 Usage
 =======================
 
 This package offers a StringView facade with the same syntax as View but accepts a Array or Array Object instance instead of path to view.
 
-The array value of 'updated_at' has been removed from this version, a new option called secondsTemplateCacheExpires has been added.
+####New Config Option:
 
-It is number of seconds since the template compiled file was last modified, as so 'time() >= ($this->files->lastModified($compiled) + $viewData->secondsTemplateCacheExpires)'
+Laravel 5.8 BladeCompiler adds a php comment to the compiled template file ```php $contents .= "<?php /**PATH {$this->getPath()} ENDPATH**/ ?>"; ```. Since StringBladeCompiler does not have a "path" aka "template file location" that would be helpful to the developer. I have included a new config value, ```templateRefKey```. This allows the developer to tag the StringBladeCompiler for where it is used. This is for if you end up digging in to the compiled view files, it would allow you to see a tag for StingBladeCompiler files.
 
-If cache_key is set, it will be used as the compiled key or a md5(template) is used.
+####Config Options:
 
 ```php
+// existing file template load (the original View() method
+return view ('bladetemplatefile',['token' => 'I am the token value']);
+```
+```php
+// string blade template load
+return view (['template' => '{{$token}}'], ['token' => 'I am the token value']);
+```
 
-// existing file template load
-return view ('bladetemplatefile', ['token' => 'I am the child template']);
+```php
+// you can mix the view types
+$preset = view (['template' => '{{$token}}'], ['token' => 'I am the token value']);
 
-// string template load
-return view (['template' => '{{$token}}'], ['token' => 'I am the child template']);
+return view ('bladetemplatefile', ['token' => $preset]);
+```
 
+```php
 // full list of options
 return view(
-			array(
-				// this actual blade template
-				'template'  => '{{ $token1 }}',
-				// this is the cache file key, converted to md5
-				'cache_key' => 'my_unique_cache_key',
-				// number of seconds needed in order to recompile, 0 is always recompile
-				'secondsTemplateCacheExpires' => 1391973007
-			),
-			array(
-				'token1'=> 'token 1 value'
-			)
-	);
+            array(
+                // this actual blade template
+                'template'  => '{{ $token1 }}',
+
+                // this is the cache file key, converted to md5
+                'cache_key' => 'my_unique_cache_key',
+
+                // number of seconds needed in order to recompile, 0 is always recompile
+                'secondsTemplateCacheExpires' => 1391973007,
+
+                // sets the PATH comment value in the compiled file
+                'templateRefKey' => 'IndexController: Build function'
+            ),
+            array(
+                'token1'=> 'token 1 value'
+            )
+        );
 ```
 
-Also allows for Blade::extend, example :
+> Since StringBlade is a extend class from the original View. You should be able to do anything you would normally do with a View using StringBlade.
 
-Since the compilers are set up as seperate instances, if you need the extend on both the string and file template you will need to attach the extend (or directive) to both compilers.
+Blade::extend, for example :
+
+As the compilers are set up as separate instances, if you need the extend on both the string and file template you will need to attach the extend (or directive) to both compilers.
 
 ```php
-	// allows for @continue and @break in foreach in blade templates
-	StringBlade::extend(function($value)
-	{
-	  return preg_replace('/(\s*)@(break|continue)(\s*)/', '$1<?php $2; ?>$3', $value);
-	});
+// allows for @continue and @break in foreach in blade templates
+StringBlade::extend(function($value)
+{
+    return preg_replace('/(\s*)@(break|continue)(\s*)/', '$1<?php $2; ?>$3', $value);
+});
+
+Blade::extend(function($value)
+{
+    return preg_replace('/(\s*)@(break|continue)(\s*)/', '$1<?php $2; ?>$3', $value);
+});
+```
+
+Other options,
+
+```php
+// change the contente tags escaped or not
+StringBlade::setContentTagsEscaped(true);
+
+// for devel force templates to be rebuilt, ignores secondsTemplateCacheExpires
+StringBlade::setForceTemplateRecompile(true);	
+```
+
+```php
+// change the contente tags escaped or not
+Blade::setContentTagsEscaped(true);
 	
-	Blade::extend(function($value)
-	{
-	  return preg_replace('/(\s*)@(break|continue)(\s*)/', '$1<?php $2; ?>$3', $value);
-	});
+// for devel force templates to be rebuilt, ignores secondsTemplateCacheExpires
+Blade::setForceTemplateRecompile(true);	
 ```
-
-New options,
 
 ```php
-	// change the contente tags escaped or not
-	StringBlade::setContentTagsEscaped(true);
-	
-	// for devel force templates to be rebuilt, ignores secondsTemplateCacheExpires
-    StringBlade::setForceTemplateRecompile(true);	
+// @deprecated This feature was removed from Laravel (https://github.com/laravel/framework/issues/17736)
+
+// change the tags
+StringBlade::setRawTags('[!!', '!!]',escapeFlag); // default {!! !!}
+StringBlade::setContentTags('[[', ']]',escapeFlag); // default {{ }}
+StringBlade::setEscapedTags('[[[', ']]]',escapeFlag); // default {{{ }}}
+
+__ Functions are still there, use at your own risk. __
 ```
 
-If you wish to use these with file templates, 
+~~Deleting generated compiled cach view files (v3+).Set the delete flag for the compiler being used, stringblade or blade~~
+
+> I can't seem to find when the setting was actually used. If you want this, submit a bug and I will see about adding the ability.
 
 ```php
-	// change the contente tags escaped or not
-	Blade::setContentTagsEscaped(true);
-	
-	// for devel force templates to be rebuilt, ignores secondsTemplateCacheExpires
-    Blade::setForceTemplateRecompile(true);	
-```
-
-Changing the tags
-
-```php
-  // change the tags
-    StringBlade::setRawTags('[!!', '!!]',escapeFlag);
-    StringBlade::setContentTags('[[', ']]',escapeFlag);
-    StringBlade::setEscapedContentTags('[[[', ']]]',escapeFlag);
-```
-
-'escapeFlag', if true then the tags will be escaped, if false then they will not be escaped (same as setContentTagsEscaped function)
-
-Deleting generated compiled cach view files (v3+),
-
-Set the delete flag for the compiler being used, stringblade or blade
-```
 // set flag to delete compiled view cache files after rendering for stringblade compiler
 View::getEngineFromStringKey('stringblade')->setDeleteViewCacheAfterRender(true);
 

@@ -18,5 +18,15 @@
             "Wpb\\String_Blade_Compiler\\": "src/"
         }
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Wpb\\String_Blade_Compiler\\StringBladeServiceProvider"
+            ],
+            "aliases": {
+                "StringBlade": "Wpb\\String_Blade_Compiler\\Facades\\StringBlade"
+            }
+        }
+    }
 }

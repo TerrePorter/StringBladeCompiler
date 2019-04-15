@@ -44,8 +44,6 @@ class CompilerEngine extends \Illuminate\View\Engines\CompilerEngine
         // which have been rendered for right exception messages to be generated.
         $results = $this->evaluatePath($compiled, $data);
 
-
-
         array_pop($this->lastCompiled);
 
         return $results;
@@ -53,6 +51,8 @@ class CompilerEngine extends \Illuminate\View\Engines\CompilerEngine
 
     /**
      * Set the delete view cache after render flag.
+     *
+     * @deprecated I can't seem to find when the setting was actually used. If you want this, submit a bug and I will see about adding the ability.
      *
      * @param bool $delete
      */
