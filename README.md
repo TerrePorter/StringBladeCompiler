@@ -66,7 +66,9 @@ In config\app.php, providers section:
 
 > There currently is a issue in Laravel's preload process of ServiceProviders. Service providers that are registered with the autoloaded are instantiated before service providers that are set in /config/app.php. This may cause problems in prior versions of StringBladeCompiler. The version has been rewitten to account for the autoloading process. 
 
-> **However, ** This could be an issue if any packages tries to use the StringBlade before it has been registered. A pull request has been filed to make Package Service Providers that are registered in /config/app.php be loaded before autoloaded ServiceProviders. The would allow manual registration of the package which would give it priority over autoload packages. 
+> A pull request that would load vendor service providers registerd in the ```config/app.php``` file before autoloads, was sent to Laravel/Framework and was rejected. 
+
+* If you have a need to have this, or any other, package load before the vendor autoloads, do this - https://gist.github.com/TerrePorter/4d2ed616c6ebeb371775347f7378c035
 
 Config
 =======================
