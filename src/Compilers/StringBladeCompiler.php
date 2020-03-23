@@ -132,5 +132,4 @@ class StringBladeCompiler extends BladeCompiler {
 
         return time() >= ($this->files->lastModified($compiled) + $viewData->secondsTemplateCacheExpires) ;
     }
-
 }

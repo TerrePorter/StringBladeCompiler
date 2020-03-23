@@ -74,7 +74,13 @@ In config\app.php, providers section:
 Config
 =======================
 
-Default cache time for the compiled string template is 300 seconds (5 mins), this can be changed in the config file or when calling a view. The change is global to all string templates.
+Default cache time for the compiled string template is 300 seconds (5 mins), this can be changed in the config file, env file, or when calling a view. The change is global to all string templates.
+
+`STRING_BLADE_CACHE_TIMEOUT=300`
+
+Autoloading of blade custom directives can be changed in the config and env files.
+
+`STRING_BLADE_AUTOLOAD=false`
 
 Note: If using homestead or some other vm, the host handles the filemtime of the cache file. This means the vm may have a different time than the file. If the cache is not expiring as expected, check the times between the systems.
 
