@@ -1,3 +1,6 @@
+# Just a temp copy from  TerrePorter/StringBladeCompiler until the owner make it work with the laravel 7
+
+
 String Blade Compiler
 =======================
 [![Laravel 6](https://img.shields.io/badge/Laravel-6-orange.svg?style=flat-square)](http://laravel.com)
@@ -13,6 +16,7 @@ Versions
 =======================
 | String Blade  | Laravel Version | 
 | ------------- |----------------:|
+| 4.1           | Laravel 7     |
 | 4.0           | Laravel 6     |
 | 3.8           | Laravel 5.8     |
 | 3.7           | Laravel 5.7     |

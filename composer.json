@@ -1,5 +1,5 @@
 {
-    "name": "wpb/string-blade-compiler",
+    "name": "enbit/string-blade-compiler",
     "description": "Laravel Blade String Compiler, render string as blade templates",
     "keywords": ["laravel", "blade", "compiler"],
     "license": "MIT",
