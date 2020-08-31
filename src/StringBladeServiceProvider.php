@@ -1,13 +1,15 @@
 <?php
 namespace Wpb\String_Blade_Compiler;
 
-use Illuminate\View\Engines\EngineResolver;
 use Illuminate\View\FileViewFinder;
 use Illuminate\View\ViewServiceProvider;
-use Wpb\String_Blade_Compiler\Compilers\StringBladeCompiler;
+use Illuminate\View\Engines\EngineResolver;
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Wpb\String_Blade_Compiler\Engines\CompilerEngine;
+use Wpb\String_Blade_Compiler\Compilers\StringBladeCompiler;
 
-class StringBladeServiceProvider extends ViewServiceProvider{
+class StringBladeServiceProvider extends ViewServiceProvider implements DeferrableProvider
+{
 
     /**
      * Register the service provider.
@@ -147,5 +149,33 @@ class StringBladeServiceProvider extends ViewServiceProvider{
         $resolver->register('stringblade', function () use ($app) {
             return new CompilerEngine($app['stringblade.compiler']);
         });
+    }
+
+    /**
+     * Bootstrap any application services.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        if(config('blade.autoload_custom_directives')) {
+            $blade = app('blade.compiler');
+            $string_blade = app('stringblade.compiler');
+
+            collect($blade->getCustomDirectives())
+                ->each(function($directive, $name) use ($string_blade) {
+                    $string_blade->directive($name, $directive);
+                });
+        }
+    }
+
+    /**
+     * Get the services provided by the provider.
+     *
+     * @return array
+     */
+    public function provides()
+    {
+        return [StringBlade::class];
     }
 }
