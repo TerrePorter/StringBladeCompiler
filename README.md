@@ -13,7 +13,8 @@ Versions
 =======================
 | String Blade  | Laravel Version | 
 | ------------- |----------------:|
-| 4.0           | Laravel 6     |
+| 5.0           | Laravel 7       |
+| 4.0           | Laravel 6       |
 | 3.8           | Laravel 5.8     |
 | 3.7           | Laravel 5.7     |
 | 3.6           | Laravel 5.6     |
