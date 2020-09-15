@@ -18,20 +18,15 @@ class StringBladeServiceProvider extends ViewServiceProvider implements Deferrab
      */
     public function register()
     {
-
         // include the package config
         $this->mergeConfigFrom(
             __DIR__.'/../config/blade.php', 'blade'
         );
 
-        // load the alias (handled by the Laravel autoloader)
-        //$this->app->alias('StringBlade', 'Wpb\String_Blade_Compiler\Facades\StringBlade');
-
-        $this->registerEngineResolver();
-
-        $this->registerViewFinder();
-
         $this->registerFactory();
+        $this->registerViewFinder();
+        $this->registerBladeCompiler();
+        $this->registerEngineResolver();
     }
 
     /**
