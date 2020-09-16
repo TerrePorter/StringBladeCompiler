@@ -171,6 +171,10 @@ class StringBladeServiceProvider extends ViewServiceProvider implements Deferrab
      */
     public function provides()
     {
-        return [StringBlade::class];
+        return [
+            StringBlade::class,
+            'view',
+            ViewFactory::class,
+        ];
     }
 }
