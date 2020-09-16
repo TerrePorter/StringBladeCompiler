@@ -4,11 +4,10 @@ namespace Wpb\String_Blade_Compiler;
 use Illuminate\View\FileViewFinder;
 use Illuminate\View\ViewServiceProvider;
 use Illuminate\View\Engines\EngineResolver;
-use Illuminate\Contracts\Support\DeferrableProvider;
 use Wpb\String_Blade_Compiler\Engines\CompilerEngine;
 use Wpb\String_Blade_Compiler\Compilers\StringBladeCompiler;
 
-class StringBladeServiceProvider extends ViewServiceProvider implements DeferrableProvider
+class StringBladeServiceProvider extends ViewServiceProvider 
 {
 
     /**
