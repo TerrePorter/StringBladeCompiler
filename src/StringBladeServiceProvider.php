@@ -26,6 +26,7 @@ class StringBladeServiceProvider extends ViewServiceProvider
         $this->registerViewFinder();
         $this->registerBladeCompiler();
         $this->registerEngineResolver();
+        $this->registerStringBladeEngine($this->app['view.engine.resolver']);
 
     }
 
