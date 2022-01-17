@@ -1,4 +1,5 @@
 <?php
+
 namespace Wpb\String_Blade_Compiler;
 
 use Illuminate\View\FileViewFinder;
@@ -7,7 +8,7 @@ use Illuminate\View\Engines\EngineResolver;
 use Wpb\String_Blade_Compiler\Engines\CompilerEngine;
 use Wpb\String_Blade_Compiler\Compilers\StringBladeCompiler;
 
-class StringBladeServiceProvider extends ViewServiceProvider 
+class StringBladeServiceProvider extends ViewServiceProvider
 {
 
     /**
@@ -19,12 +20,13 @@ class StringBladeServiceProvider extends ViewServiceProvider
     {
         // include the package config
         $this->mergeConfigFrom(
-            __DIR__.'/../config/blade.php', 'blade'
+            __DIR__ . '/../config/blade.php', 'blade'
         );
 
         $this->registerFactory();
         $this->registerViewFinder();
         $this->registerBladeCompiler();
+        $this->registerStringbladeCompiler();
         $this->registerEngineResolver();
 
     }
@@ -60,9 +62,9 @@ class StringBladeServiceProvider extends ViewServiceProvider
     /**
      * Create a new Factory Instance.
      *
-     * @param  \Illuminate\View\Engines\EngineResolver  $resolver
-     * @param  \Illuminate\View\ViewFinderInterface  $finder
-     * @param  \Illuminate\Contracts\Events\Dispatcher  $events
+     * @param \Illuminate\View\Engines\EngineResolver $resolver
+     * @param \Illuminate\View\ViewFinderInterface $finder
+     * @param \Illuminate\Contracts\Events\Dispatcher $events
      * @return \Illuminate\View\Factory
      */
     protected function createFactory($resolver, $finder, $events)
@@ -87,12 +89,12 @@ class StringBladeServiceProvider extends ViewServiceProvider
         // recreate the view.finder
         $this->app->bind('view.finder', function ($app) use ($oldFinder) {
 
-            $paths = (isset($oldFinder['paths']))?array_unique(array_merge($app['config']['view.paths'], $oldFinder['paths']), SORT_REGULAR):$app['config']['view.paths'];
+            $paths = (isset($oldFinder['paths'])) ? array_unique(array_merge($app['config']['view.paths'], $oldFinder['paths']), SORT_REGULAR) : $app['config']['view.paths'];
 
             $viewFinder = new FileViewFinder($app['files'], $paths);
 
             if (!empty($oldFinder['hints'])) {
-                array_walk($oldFinder['hints'], function($value, $key) use ($viewFinder) {
+                array_walk($oldFinder['hints'], function ($value, $key) use ($viewFinder) {
                     $viewFinder->addNamespace($key, $value);
                 });
             }
@@ -109,14 +111,14 @@ class StringBladeServiceProvider extends ViewServiceProvider
     public function registerEngineResolver()
     {
         // recreate the resolver, adding stringblade
-        $this->app->singleton('view.engine.resolver', function () {
+        $this->app->singleton('view.engine.resolver', function ($app) {
             $resolver = new EngineResolver;
 
             // Next, we will register the various view engines with the resolver so that the
             // environment will resolve the engines needed for various views based on the
             // extension of view file. We call a method for each of the view's engines.
             foreach (['file', 'php', 'blade', 'stringblade'] as $engine) {
-                $this->{'register'.ucfirst($engine).'Engine'}($resolver);
+                $this->{'register' . ucfirst($engine) . 'Engine'}($resolver);
             }
 
             return $resolver;
@@ -124,25 +126,31 @@ class StringBladeServiceProvider extends ViewServiceProvider
     }
 
     /**
-     * Register the StringBlade engine implementation.
+     * Register the String Blade compiler implementation.
      *
-     * @param  \Illuminate\View\Engines\EngineResolver  $resolver
      * @return void
      */
-    public function registerStringBladeEngine($resolver)
+    public function registerStringbladeCompiler()
     {
-        $app = $this->app;
-
         // The Compiler engine requires an instance of the CompilerInterface, which in
         // this case will be the Blade compiler, so we'll first create the compiler
         // instance to pass into the engine so it can compile the views properly.
-        $app->singleton('stringblade.compiler', function ($app) {
-            $cache = $app['config']['view.compiled'];
-            return new StringBladeCompiler($app['files'], $cache);
+        $this->app->singleton('stringblade.compiler', function () {
+            $cache = $this->app['config']['view.compiled'];
+            return new StringBladeCompiler($this->app['files'], $cache);
         });
+    }
 
-        $resolver->register('stringblade', function () use ($app) {
-            return new CompilerEngine($app['stringblade.compiler']);
+    /**
+     * Register the StringBlade engine implementation.
+     *
+     * @param \Illuminate\View\Engines\EngineResolver $resolver
+     * @return void
+     */
+    public function registerStringbladeEngine($resolver)
+    {
+        $resolver->register('stringblade', function () {
+            return new CompilerEngine($this->app['stringblade.compiler']);
         });
     }
 
@@ -153,12 +161,12 @@ class StringBladeServiceProvider extends ViewServiceProvider
      */
     public function boot()
     {
-        if(config('blade.autoload_custom_directives')) {
+        if (config('blade.autoload_custom_directives')) {
             $blade = app('blade.compiler');
             $string_blade = app('stringblade.compiler');
 
             collect($blade->getCustomDirectives())
-                ->each(function($directive, $name) use ($string_blade) {
+                ->each(function ($directive, $name) use ($string_blade) {
                     $string_blade->directive($name, $directive);
                 });
         }
