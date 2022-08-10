@@ -11,20 +11,21 @@ Reworked version to allow for array to be passed to the view function instead of
 
 Versions
 =======================
-| String Blade  | Laravel Version | 
-| ------------- |----------------:|
-| 6.0           | Laravel 8       |
-| 5.0           | Laravel 7       |
-| 4.0           | Laravel 6       |
-| 3.8           | Laravel 5.8     |
-| 3.7           | Laravel 5.7     |
-| 3.6           | Laravel 5.6     |
-| 3.5           | Laravel 5.5     |
-| 3.4           | Laravel 5.4     |
-| 3.3           | Laravel 5.2     |
-| 3.2           | Laravel 5.1     |
-| 2.*           | Laravel 5       |
-| 1.*           | Laravel 4.2     |
+| String Blade | Laravel Version | 
+|--------------|----------------:|
+| 7.0          |       Laravel 9 |
+| 6.0          |       Laravel 8 |
+| 5.0          |       Laravel 7 |
+| 4.0          |       Laravel 6 |
+| 3.8          |     Laravel 5.8 |
+| 3.7          |     Laravel 5.7 |
+| 3.6          |     Laravel 5.6 |
+| 3.5          |     Laravel 5.5 |
+| 3.4          |     Laravel 5.4 |
+| 3.3          |     Laravel 5.2 |
+| 3.2          |     Laravel 5.1 |
+| 2.*          |       Laravel 5 |
+| 1.*          |     Laravel 4.2 |
 
 Version 3.8 : Updates
 =======================
